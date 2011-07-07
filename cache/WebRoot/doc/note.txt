@@ -1,0 +1,9 @@
+<Manager className=¡±de.javakaffee.web.msm.MemcachedBackupSessionManager¡±    
+        memcachedNodes=¡±n1:192.168.0.84:11211¡å    
+        requestUriIgnorePattern=¡±.*\.(png|gif|jpg|css|js)$¡±    
+        sessionBackupAsync=¡±false¡±    
+        sessionBackupTimeout=¡±100¡å    
+        transcoderFactoryClass=¡±de.javakaffee.web.msm.serializer.javolution.JavolutionTranscoderFactory¡±    
+        copyCollectionsForSerialization=¡±false¡±  
+/>
+
