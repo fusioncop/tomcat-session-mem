@@ -29,6 +29,7 @@ import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 
 /**
+ * 类似	LRUCache 存放节点	NodeAvailabilityCache
  * An LRUCache that supports a maximum number of cache entries and a time to
  * live for them. The TTL is measured from insertion time to access time.
  *
