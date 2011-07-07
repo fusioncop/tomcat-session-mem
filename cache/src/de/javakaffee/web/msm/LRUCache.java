@@ -71,15 +71,11 @@ public class LRUCache<K, V> {
         _map = new LinkedHashMap<K, ManagedItem<V>>( size / 2, 0.75f, true );
     }
 
-    /**
-     * Put the key and value.
-     *
-     * @param key
-     *            the key
-     * @param value
-     *            the value
-     * @return the previously associated value or <code>null</code>.
-     */
+    
+	/**
+	 * 当map的size达到最大值时，将删除最小key
+	 * @return
+	 */
     public V put( final K key, final V value ) {
         synchronized ( _map ) {
             final ManagedItem<V> previous = _map.put( key, new ManagedItem<V>( value, System.currentTimeMillis() ) );
@@ -218,7 +214,9 @@ public class LRUCache<K, V> {
      *            the type of the value
      */
     private static final class ManagedItem<T> {
+    	// 值
         private final T _value;
+        //插入时间
         private final long _insertionTime;
 
         private ManagedItem( final T value, final long accessTime ) {
