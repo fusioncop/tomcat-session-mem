@@ -80,12 +80,16 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
 
     protected static final String NAME = MemcachedBackupSessionManager.class.getSimpleName();
 
+    //版本
     private static final String INFO = NAME + "/1.0";
 
+    //memcachedNodes 正则
     private static final String NODE_REGEX = "([\\w]+):([^:]+):([\\d]+)";
+    //memcachedNodes 正则 Pattern 对象
     private static final Pattern NODE_PATTERN = Pattern.compile( NODE_REGEX );
-
+    //多个 memcachedNodes 正则
     private static final String NODES_REGEX = NODE_REGEX + "(?:(?:\\s+|,)" + NODE_REGEX + ")*";
+  //多个 memcachedNodes 正则 Pattern 对象
     private static final Pattern NODES_PATTERN = Pattern.compile( NODES_REGEX );
 
     private static final int NODE_AVAILABILITY_CACHE_TTL = 50;
@@ -109,13 +113,14 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     // -------------------- configuration properties --------------------
 
     /**
-     * The memcached nodes space separated and with the id prefix, e.g.
-     * n1:localhost:11211 n2:localhost:11212
+     * memcached 节点名称：ip：port
+     *  e.g. n1:localhost:11211 n2:localhost:11212
      *
      */
     private String _memcachedNodes;
 
     /**
+     * 失效的节点，<code>n1 n2</code>
      * The ids of memcached failover nodes separated by space, e.g.
      * <code>n1 n2</code>
      *
@@ -123,13 +128,14 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     private String _failoverNodes;
 
     /**
-     * The pattern used for excluding requests from a session-backup, e.g.
+     * 符合正则的请求将被排除备份session, e.g.
      * <code>.*\.(png|gif|jpg|css|js)$</code>. Is matched against
      * request.getRequestURI.
      */
     private String _requestUriIgnorePattern;
 
     /**
+     * 异步
      * Specifies if the session shall be stored asynchronously in memcached as
      * {@link MemcachedClient#set(String, int, Object)} supports it. If this is
      * false, the timeout set via {@link #setSessionBackupTimeout(int)} is
@@ -180,7 +186,7 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     private boolean _copyCollectionsForSerialization = false;
 
     private String _customConverterClassNames;
-
+	// Statistics 控制
     private boolean _enableStatistics = true;
 
     private int _backupThreadCount = Runtime.getRuntime().availableProcessors();
@@ -190,7 +196,8 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     private final AtomicBoolean _enabled = new AtomicBoolean( true );
 
     // -------------------- END configuration properties --------------------
-
+    
+    // Statistics
     protected Statistics _statistics;
 
     /*
@@ -418,6 +425,12 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
         } );
     }
 
+    /**
+     * 从nodeIds中清除失效的memcached节点，并返回失效的节点
+     * @param failoverNodes		失效的节点字符串
+     * @param nodeIds			正常的节点
+     * @return
+     */
     private static List<String> initFailoverNodes( final String failoverNodes, final List<String> nodeIds ) {
         final List<String> failoverNodeIds = new ArrayList<String>();
         if ( failoverNodes != null && failoverNodes.trim().length() != 0 ) {
@@ -434,6 +447,14 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
         return failoverNodeIds;
     }
 
+    /**
+     * 将匹配的memcache节点：nodeId, host, port 都拆分开来，
+     * 并放入响应的集合中
+     * @param matcher		正则
+     * @param addresses		存放Inet地址
+     * @param address2Ids	存放<Inet地址, nodeId>
+     * @param nodeIds		存放nodeId
+     */
     private static void initHandleNodeDefinitionMatch( final Matcher matcher, final List<InetSocketAddress> addresses,
             final Map<InetSocketAddress, String> address2Ids, final List<String> nodeIds ) {
         final String nodeId = matcher.group( 1 );
@@ -624,7 +645,8 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     public void changeSessionId( final Session session ) {
         // e.g. invoked by the AuthenticatorBase (for BASIC auth) on login to prevent session fixation
         // so that session backup won't be omitted we must store this event
-        super.changeSessionId( session );
+    	// FIXME 报错，故注释之
+    	//        super.changeSessionId( session );
         ((MemcachedBackupSession)session).setSessionIdChanged( true );
     }
 
@@ -1865,14 +1887,21 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     }
 
     // ---------------------------------------------------------------------------
-
-    private static class MemcachedConfig {
-        private final String _memcachedNodes;
+    
+    /**
+     * Memcached 节点信息
+     */
+        private static class MemcachedConfig {
+    	private final String _memcachedNodes;
         private final String _failoverNodes;
         private final NodeIdList _nodeIds;
         private final List<String> _failoverNodeIds;
         private final List<InetSocketAddress> _addresses;
         private final Map<InetSocketAddress, String> _address2Ids;
+       
+        /**
+         * Memcached 节点信息
+         */
         public MemcachedConfig( final String memcachedNodes, final String failoverNodes,
                 final NodeIdList nodeIds, final List<String> failoverNodeIds, final List<InetSocketAddress> addresses,
                 final Map<InetSocketAddress, String> address2Ids ) {

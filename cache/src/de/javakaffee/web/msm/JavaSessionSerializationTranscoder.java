@@ -30,6 +30,7 @@ import org.apache.catalina.session.StandardSession;
 import org.apache.catalina.util.CustomObjectInputStream;
 
 /**
+ * session的序列化与反序列化
  * A {@link net.spy.memcached.transcoders.Transcoder} that serializes catalina
  * {@link StandardSession}s using java serialization (and the serialization of
  * {@link StandardSession} via {@link StandardSession#writeObjectData(ObjectOutputStream)}
