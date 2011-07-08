@@ -219,6 +219,9 @@ public class Statistics {
 
     }
 
+    /**
+     * 记录  最小时间和最大小时，平均时间的工具类
+     */
     public static class MinMaxAvgProbe {
 
         private boolean _first = true;
@@ -295,6 +298,9 @@ public class Statistics {
 
     }
 
+    /**
+     * 空
+     */
     private static final Statistics DISABLED_STATS = new Statistics() {
 
         @Override

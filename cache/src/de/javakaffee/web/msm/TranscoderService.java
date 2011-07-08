@@ -38,6 +38,9 @@ import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 
 /**
+ * 负责序列化或者反序列化session数据，可以从memcached加载或者存储。
+ * 序列化 是将session 对象的时间戳属性，attribute属性，转换为byte[]
+ * 反序列化 反之
  * This service is responsible for serializing/deserializing session data
  * so that this can be stored in / loaded from memcached.
  *
@@ -68,20 +71,10 @@ public class TranscoderService {
         _attributesTranscoder = attributesTranscoder;
     }
 
-    /**
-     * Serialize the given session to a byte array. This is a shortcut for
-     * <code><pre>
-     * final byte[] attributesData = serializeAttributes( session, session.getAttributes() );
-     * serialize( session, attributesData );
-     * </pre></code>
-     * The returned byte array can be deserialized using {@link #deserialize(byte[], Realm, Manager)}.
-     *
-     * @see #serializeAttributes(MemcachedBackupSession, Map)
-     * @see #serialize(MemcachedBackupSession, byte[])
-     * @see #deserialize(byte[], Realm, Manager)
-     * @param session the session to serialize.
-     * @return the serialized session data.
-     */
+   /**
+    * 序列化对象 session 对象 并返回序列化后的数组
+    * @return
+    */
     public byte[] serialize( final MemcachedBackupSession session ) {
         final byte[] attributesData = serializeAttributes( session, session.getAttributesInternal() );
         return serialize( session, attributesData );
@@ -126,17 +119,12 @@ public class TranscoderService {
         }
     }
 
-    /**
-     * Serialize the given session attributes to a byte array, this is delegated
-     * to {@link SessionAttributesTranscoder#serializeAttributes(MemcachedBackupSession, Map)} (using
-     * the {@link SessionAttributesTranscoder} provided in the constructor of this class).
-     *
-     * @param session the session that owns the given attributes.
-     * @param attributes the attributes to serialize.
-     * @return a byte array representing the serialized attributes.
-     *
-     * @see de.javakaffee.web.msm.SessionAttributesTranscoder#serializeAttributes(MemcachedBackupSession, Map)
-     */
+    
+	/**
+	 * 序列化session 的attribute属性，返回序列化后的数组
+	 * @link SessionAttributesTranscoder#serializeAttributes(MemcachedBackupSession, Map)
+	 * @return
+	 */
     public byte[] serializeAttributes( final MemcachedBackupSession session, final Map<String, Object> attributes ) {
         return _attributesTranscoder.serializeAttributes( session, attributes );
     }
@@ -158,13 +146,8 @@ public class TranscoderService {
     }
 
     /**
-     * Serialize session fields to a byte[] and create a byte[] containing both the
-     * serialized byte[] of the session fields and the provided byte[] of the serialized
-     * session attributes.
-     *
-     * @param session its fields will be serialized to a byte[]
-     * @param attributesData the serialized session attributes (e.g. from {@link #serializeAttributes(MemcachedBackupSession, Map)})
-     * @return a byte[] containing both the serialized session fields and the provided serialized session attributes
+     * 序列化 session 信息， 并将 序列化后的attributesData 与之合并，返回合并后的数组
+     * @return
      */
     public byte[] serialize( final MemcachedBackupSession session, final byte[] attributesData ) {
         final byte[] sessionData = serializeSessionFields( session );
@@ -176,9 +159,11 @@ public class TranscoderService {
 
     // ---------------------  private/protected helper methods  -------------------
 
-
+    /**
+     * 将 版本信息，权限信息，session 对象信息，session id 信息，转存为byte[]
+     */
     static byte[] serializeSessionFields( final MemcachedBackupSession session ) {
-
+    	//sessionid 序列化
         final byte[] idData = serializeId( session.getIdInternal() );
 
         final byte[] principalData = session.getPrincipal() != null ? serializePrincipal( session.getPrincipal() ) : null;
@@ -196,8 +181,10 @@ public class TranscoderService {
         final byte[] data = new byte[sessionFieldsDataLength];
 
         int idx = 0;
+        //CURRENT_VERSION
         idx = encodeNum( CURRENT_VERSION, data, idx, 2 );
         idx = encodeNum( sessionFieldsDataLength, data, idx, 2 );
+        // session对象的属性-----
         idx = encodeNum( session.getCreationTimeInternal(), data, idx, 8 );
         idx = encodeNum( session.getLastAccessedTimeInternal(), data, idx, 8 );
         idx = encodeNum( session.getMaxInactiveInterval(), data, idx, 4 );
@@ -205,6 +192,7 @@ public class TranscoderService {
         idx = encodeBoolean( session.isValidInternal(), data, idx );
         idx = encodeNum( session.getThisAccessedTimeInternal(), data, idx, 8 );
         idx = encodeNum( session.getLastBackupTime(), data, idx, 8 );
+        // session对象的属性-----
         idx = encodeNum( idData.length, data, idx, 2 );
         idx = copy( idData, data, idx );
         idx = encodeNum( AuthType.valueOfValue( session.getAuthType() ).getId(), data, idx, 2 );
@@ -326,19 +314,12 @@ public class TranscoderService {
     }
 
     /**
-     * Convert a number to bytes (with length of maxBytes) and write bytes into
-     * the provided byte[] data starting at the specified beginIndex.
-     *
-     * @param num
-     *            the number to encode
-     * @param data
-     *            the byte array into that the number is encoded
-     * @param beginIndex
-     *            the beginning index of data where to start encoding,
-     *            inclusive.
-     * @param maxBytes
-     *            the number of bytes to store for the number
-     * @return the next beginIndex (<code>beginIndex + maxBytes</code>).
+     * 将数字类型转存为数组，并返回新的下标位置
+     * @param num		待转换的数字
+     * @param data		数组
+     * @param beginIndex起始位置
+     * @param maxBytes	步长
+     * @return
      */
     public static int encodeNum( final long num, final byte[] data, final int beginIndex, final int maxBytes ) {
         // 后一位存放的比前一位大
@@ -346,10 +327,18 @@ public class TranscoderService {
             final int pos = maxBytes - i - 1; // the position of the byte in the number
             final int idx = beginIndex + pos; // the index in the data array
             data[idx] = (byte) ( ( num >> ( 8 * i ) ) & 0xff );
+            System.out.println(pos+"-->"+idx+"-->"+data+"-->"+(( num >> ( 8 * i ) ) & 0xff ));
         }
         return beginIndex + maxBytes;
     }
 
+    /**
+     * 还原数组中的数据 
+     * @param data			数组
+     * @param beginIndex	起始位置
+     * @param numBytes		步长
+     * @return
+     */
     public static long decodeNum( final byte[] data, final int beginIndex, final int numBytes ) {
         long result = 0;
         for ( int i = 0; i < numBytes; i++ ) {

@@ -236,6 +236,10 @@ public class BackupSessionService {
                 _statistics );
     }
 
+    /**
+     * ºÏ≤È «∑Ò «memcachedSessionID
+     * @return
+     */
     private boolean hasMemcachedIdSet( final MemcachedBackupSession session ) {
         return _sessionIdFormat.isValid( session.getId() );
     }
