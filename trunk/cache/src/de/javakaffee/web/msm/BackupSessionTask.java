@@ -40,6 +40,8 @@ import de.javakaffee.web.msm.BackupSessionTask.BackupResult;
 import de.javakaffee.web.msm.SessionTrackerValve.SessionBackupService.BackupResultStatus;
 
 /**
+ * 执行存储session至memcache操作
+ * 
  * Stores the provided session in memcached if the session was modified
  * or if the session needs to be relocated (set <code>force</code> to <code>true</code>).
  *
@@ -210,6 +212,10 @@ public class BackupSessionTask implements Callable<BackupResult> {
         }
     }
 
+    /**
+     * 存入memcache 中
+     * @throws NodeFailureException
+     */
     private void storeSessionInMemcached( final MemcachedBackupSession session, final byte[] data) throws NodeFailureException {
 
         /* calculate the expiration time (instead of using just maxInactiveInterval), as
