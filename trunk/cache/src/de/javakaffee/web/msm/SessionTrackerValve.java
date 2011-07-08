@@ -216,7 +216,8 @@ class SessionTrackerValve extends ValveBase {
             }
 
             if ( newSessionId != null ) {
-                request.changeSessionId( newSessionId );
+            	// FIXME ±¨´í£¬¹Ê×¢ÊÍÖ®
+//                request.changeSessionId( newSessionId );
                 return true;
             }
 
