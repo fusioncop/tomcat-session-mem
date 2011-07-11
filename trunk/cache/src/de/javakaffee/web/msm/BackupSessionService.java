@@ -101,6 +101,7 @@ public class BackupSessionService {
     }
 
     /**
+     * 更新 memcache session 至memcache 中
      * Update the expiration for the session associated with this {@link BackupSessionService}
      * in memcached, so that the session will expire in
      * <em>session.maxInactiveInterval - timeIdle</em>
