@@ -19,6 +19,8 @@ package de.javakaffee.web.msm;
 import org.apache.catalina.Manager;
 
 /**
+ * session attribute and session 序列化 管理工厂
+ * 
  * 用来创建{@link net.spy.memcached.transcoders.Transcoder}(session和memcached之间序列化或者反序列化)
  * 的工厂，实现类必须提供一个默认的没有参数的构造函数
  * 
