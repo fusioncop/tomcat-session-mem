@@ -19,6 +19,7 @@ package de.javakaffee.web.msm;
 import org.apache.catalina.Manager;
 
 /**
+ * session attribute and session 序列化 管理工厂
  * A {@link TranscoderFactory} that creates {@link JavaSerializationTranscoder} instances.
  *
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
