@@ -53,6 +53,7 @@ public class SessionValidityInfo {
     }
 
     /**
+     * 有效性检查key
      * Creates the name/key that can be used for storing the encoded session validity information.
      */
     @Nonnull
@@ -65,6 +66,7 @@ public class SessionValidityInfo {
 
 
     /**
+     * 将 最大存活时间， 最后访问时间，本次访问时间，转存为byte数组<br/>
      * Encode the given information to a byte[], that can be decoded later via {@link #decode(byte[])}.
      */
     @Nonnull
