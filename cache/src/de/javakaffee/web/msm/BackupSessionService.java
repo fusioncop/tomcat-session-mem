@@ -42,6 +42,7 @@ import org.apache.juli.logging.LogFactory;
 import de.javakaffee.web.msm.BackupSessionTask.BackupResult;
 
 /**
+ * 新增或者更新memcache 中session对象业务操作类
  * This service is responsible for storing sessions memcached. This includes
  * serialization (which is delegated to the {@link TranscoderService}) and
  * the communication with memcached (using a provided {@link MemcachedClient}).
@@ -141,6 +142,7 @@ public class BackupSessionService {
     }
 
     /**
+     * 新增 memcache session 至memcache 中
      * Store the provided session in memcached if the session was modified
      * or if the session needs to be relocated.
      * <p>
@@ -245,6 +247,11 @@ public class BackupSessionService {
         return _sessionIdFormat.isValid( session.getId() );
     }
 
+    
+    /**
+     * 释放session 锁
+     * @param session
+     */
     private void releaseLock( @Nonnull final MemcachedBackupSession session ) {
         if ( session.isLocked()  ) {
             try {
@@ -262,6 +269,7 @@ public class BackupSessionService {
     }
 
     /**
+     * 单线程服务。
      * An implementation of {@link ExecutorService} that executes submitted {@link Callable}s
      * and {@link Runnable}s in the caller thread.
      * <p>
@@ -398,6 +406,7 @@ public class BackupSessionService {
     }
 
     /**
+     * 简单 异步计算的结果 只包含 返回值，异常类
      * A future implementations that wraps an already existing result
      * or a caught exception.
      *
