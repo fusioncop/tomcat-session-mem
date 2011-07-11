@@ -193,6 +193,7 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
 
     private String _memcachedProtocol = PROTOCOL_TEXT;
 
+    // 是否容许创建  memcacheClient
     private final AtomicBoolean _enabled = new AtomicBoolean( true );
 
     // -------------------- END configuration properties --------------------
@@ -322,6 +323,12 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
 
     }
 
+    /**
+     * 将配置文件中的节点配置信息，区分正常与异常节点，并返回 配置信息对象  MemcachedConfig 
+     * @param memcachedNodes	配置文件中的所有节点字符串
+     * @param failoverNodes		配置文件中的错误节点字符串
+     * @return
+     */
     protected static MemcachedConfig createMemcachedConfig( final String memcachedNodes, final String failoverNodes ) {
         if ( !NODES_PATTERN.matcher( memcachedNodes ).matches() ) {
             throw new IllegalArgumentException( "Configured memcachedNodes attribute has wrong format, must match " + NODES_REGEX );
@@ -360,6 +367,9 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
         return _transcoderFactory;
     }
 
+    /**
+     * 创建 MemcachedClient, _enabled 为  是否容许创建
+     */
     protected MemcachedClient createMemcachedClient( final NodeIdList nodeIds, final List<InetSocketAddress> addresses,
             final Map<InetSocketAddress, String> address2Ids,
             final Statistics statistics ) {
@@ -374,6 +384,9 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
         }
     }
 
+    /**
+     * 创建 MemcachedClient
+     */
     private ConnectionFactory createConnectionFactory(
             final NodeIdList nodeIds, final Map<InetSocketAddress, String> address2Ids,
             final Statistics statistics ) {
@@ -450,10 +463,10 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     /**
      * 将匹配的memcache节点：nodeId, host, port 都拆分开来，
      * 并放入响应的集合中
-     * @param matcher		正则
-     * @param addresses		存放Inet地址
-     * @param address2Ids	存放<Inet地址, nodeId>
-     * @param nodeIds		存放nodeId
+     * @param matcher		正则 对象
+     * @param addresses		存放Inet<Inet>地址 集合
+     * @param address2Ids	存放<Inet地址, 'n1'> 集合
+     * @param nodeIds		存放nodeId<'n1'> 集合 
      */
     private static void initHandleNodeDefinitionMatch( final Matcher matcher, final List<InetSocketAddress> addresses,
             final Map<InetSocketAddress, String> address2Ids, final List<String> nodeIds ) {
@@ -1889,10 +1902,12 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     // ---------------------------------------------------------------------------
     
     /**
-     * Memcached 节点信息
+     * Memcached 节点信息配置信息
      */
         private static class MemcachedConfig {
+        // 所有节点信息
     	private final String _memcachedNodes;
+    	// 错误节点信息
         private final String _failoverNodes;
         private final NodeIdList _nodeIds;
         private final List<String> _failoverNodeIds;
@@ -1900,7 +1915,7 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
         private final Map<InetSocketAddress, String> _address2Ids;
        
         /**
-         * Memcached 节点信息
+         * Memcached 节点信息配置信息
          */
         public MemcachedConfig( final String memcachedNodes, final String failoverNodes,
                 final NodeIdList nodeIds, final List<String> failoverNodeIds, final List<InetSocketAddress> addresses,

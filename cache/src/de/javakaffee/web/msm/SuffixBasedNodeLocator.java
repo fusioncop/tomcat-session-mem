@@ -34,8 +34,8 @@ import net.spy.memcached.NodeLocator;
 import net.spy.memcached.ops.Operation;
 
 /**
+ * MemcachedNode 节点控制器 
  * Locates nodes based on their id which is a part of the sessionId (key).
- *
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  * @version $Id$
  */
@@ -48,6 +48,7 @@ class SuffixBasedNodeLocator implements NodeLocator {
     private final SessionIdFormat _sessionIdFormat;
 
     /**
+     * MemcachedNode 节点控制器 <br/>
      * Create a new {@link SuffixBasedNodeLocator}.
      *
      * @param nodes
@@ -77,15 +78,15 @@ class SuffixBasedNodeLocator implements NodeLocator {
         _sessionIdFormat = sessionIdFormat;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+   /**
+    * 所有 MemcachedNode 节点
+    */
     public Collection<MemcachedNode> getAll() {
         return _nodesMap.values();
     }
 
     /**
-     * {@inheritDoc}
+     * 根据key查找节点
      */
     public MemcachedNode getPrimary( final String key ) {
         final MemcachedNode result = _nodesMap.get( getNodeId( key ) );
@@ -94,7 +95,11 @@ class SuffixBasedNodeLocator implements NodeLocator {
         }
         return result;
     }
-
+   
+    /**
+     * 自有key规则
+     * @return
+     */
     private String getNodeId( final String key ) {
         final String nodeId = _sessionIdFormat.extractMemcachedId( key );
         if ( !_sessionIdFormat.isBackupKey( key ) ) {
@@ -104,15 +109,17 @@ class SuffixBasedNodeLocator implements NodeLocator {
     }
 
     /**
-     * {@inheritDoc}
+     * 迭代器 MemcachedNode
      */
+    //TODO why throw Exception
     public Iterator<MemcachedNode> getSequence( final String key ) {
         throw new UnsupportedOperationException( "This should not be called as we specified FailureMode.Cancel." );
     }
 
     /**
-     * {@inheritDoc}
+     * 只读节点 
      */
+    //TODO 节点同步，memcached 服务器实现 OR memcache jar 实现，待研究
     public NodeLocator getReadonlyCopy() {
         final List<MemcachedNode> nodes = new ArrayList<MemcachedNode>();
         for ( final MemcachedNode node : _nodes ) {
@@ -122,8 +129,8 @@ class SuffixBasedNodeLocator implements NodeLocator {
     }
 
     /**
+     * readonly copies 节点
      * The class that is used for readonly copies.
-     *
      */
     static class MyMemcachedNodeROImpl implements MemcachedNode {
 
