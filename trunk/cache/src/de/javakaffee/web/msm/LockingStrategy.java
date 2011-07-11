@@ -67,8 +67,11 @@ public abstract class LockingStrategy {
     }
 
     protected static final String LOCK_VALUE = "locked";
+    //再次访问时间间隔（毫秒）
     protected static final int LOCK_RETRY_INTERVAL = 10;
+    //再次访问最大时间间隔（毫秒）
     protected static final int LOCK_MAX_RETRY_INTERVAL = 500;
+    //再次访问超时时间（秒）
     protected static final int LOCK_TIMEOUT = 2000;
 
     protected final Log _log = LogFactory.getLog( getClass() );
@@ -133,62 +136,104 @@ public abstract class LockingStrategy {
         return lock( sessionId, LOCK_TIMEOUT, TimeUnit.MILLISECONDS );
     }
 
+    /**
+     * 初次锁定session
+     * 锁定线程操作----将sessionid 放入memcached 中，标识为锁定。
+     * @param sessionId			sessionId
+     * @param timeout			超时时间
+     * @param timeUnit			超时时间单位
+     * @return
+     */
     protected LockStatus lock( final String sessionId, final long timeout, final TimeUnit timeUnit ) {
         if ( _log.isDebugEnabled() ) {
             _log.debug( "Locking session " + sessionId );
         }
         final long start = System.currentTimeMillis();
         try {
-            acquireLock( sessionId, LOCK_RETRY_INTERVAL, LOCK_MAX_RETRY_INTERVAL, timeUnit.toMillis( timeout ),
-                    System.currentTimeMillis() );
+        	//锁定 操作
+            acquireLock( sessionId, LOCK_RETRY_INTERVAL, LOCK_MAX_RETRY_INTERVAL, timeUnit.toMillis( timeout ), System.currentTimeMillis() );
             _stats.registerSince( ACQUIRE_LOCK, start );
             if ( _log.isDebugEnabled() ) {
                 _log.debug( "Locked session " + sessionId );
             }
             return LockStatus.LOCKED;
         } catch ( final TimeoutException e ) {
+        	// 锁定超时
             _log.warn( "Reached timeout when trying to aquire lock for session " + sessionId
                     + ". Will use this session without this lock." );
             _stats.registerSince( ACQUIRE_LOCK_FAILURE, start );
             return LockStatus.COULD_NOT_AQUIRE_LOCK;
         } catch ( final InterruptedException e ) {
+        	// 线程异常 中断线程
             Thread.currentThread().interrupt();
             throw new RuntimeException( "Got interrupted while trying to lock session.", e );
         } catch ( final ExecutionException e ) {
+        	//无法锁定
             _log.warn( "An exception occurred when trying to aquire lock for session " + sessionId );
             _stats.registerSince( ACQUIRE_LOCK_FAILURE, start );
             return LockStatus.COULD_NOT_AQUIRE_LOCK;
         }
     }
 
+    /**
+     * 直到 将 key 为sessionid 的锁定对象放入memcached 成功后， 才结束该方法
+     * 否则 ，休眠后，继续执行，一直尝试 放入锁定对象，直到超时（指定超时时间） 才终止。
+     * @param sessionId					sessionId
+     * @param retryInterval				再此访问时间
+     * @param maxRetryInterval			最大再此访问时间
+     * @param timeout					超时
+     * @param start						起始时间
+     * @throws InterruptedException
+     * @throws ExecutionException
+     * @throws TimeoutException
+     */
     protected void acquireLock( @Nonnull final String sessionId, final long retryInterval, final long maxRetryInterval,
             final long timeout, final long start ) throws InterruptedException, ExecutionException, TimeoutException {
-        final Future<Boolean> result = _memcached.add( _sessionIdFormat.createLockName( sessionId ), 5, LOCK_VALUE );
-        if ( result.get().booleanValue() ) {
+        //有返回结果，
+    	final Future<Boolean> result = _memcached.add( _sessionIdFormat.createLockName( sessionId ), 5, LOCK_VALUE );
+    	//执行成功
+    	if ( result.get().booleanValue() ) {
             if ( _log.isDebugEnabled() ) {
                 _log.debug( "Locked session " + sessionId );
             }
             return;
         }
         else {
+        	//执行失败，休眠后，继续执行
             checkTimeoutAndWait( sessionId, retryInterval, maxRetryInterval, timeout, start );
             acquireLock( sessionId, retryInterval * 2, maxRetryInterval, timeout, start );
         }
     }
 
+    /**
+     * 如果未超时，则休眠指定时间 <b>timeToWait</b>
+     * 否则抛出超时异常
+     * @param sessionId					sessionId
+     * @param retryInterval				再此访问时间
+     * @param maxRetryInterval			最大再此访问时间
+     * @param timeout					超时
+     * @param start						起始时间
+     */
     protected void checkTimeoutAndWait( @Nonnull final String sessionId, final long retryInterval,
             final long maxRetryInterval, final long timeout, final long start ) throws TimeoutException,
             InterruptedException {
+    	//超时判断
         if ( System.currentTimeMillis() >= start + timeout ) {
             throw new TimeoutException( "Reached timeout when trying to aquire lock for session " + sessionId );
         }
+        //最小间隔访问时间
         final long timeToWait = min( retryInterval, maxRetryInterval );
         if ( _log.isDebugEnabled() ) {
             _log.debug( "Could not aquire lock for session " + sessionId + ", waiting " + timeToWait + " millis now..." );
         }
+        //休眠
         sleep( timeToWait );
     }
 
+    /**
+     * 释放锁，删除memcached 中的key为sessionid的对象
+     * @param sessionId		sessionid
+     */
     protected void releaseLock( @Nonnull final String sessionId ) {
         try {
             if ( _log.isDebugEnabled() ) {
@@ -203,6 +248,7 @@ public abstract class LockingStrategy {
     }
 
     /**
+     *TODO  待定
      * Is invoked for the backup of a non-sticky session that was not accessed for the current request.
      */
     protected void onBackupWithoutLoadedSession( @Nonnull final String sessionId, @Nonnull final String requestId,
@@ -224,10 +270,10 @@ public abstract class LockingStrategy {
             }
 
             final int maxInactiveInterval = validityInfo.getMaxInactiveInterval();
-            final byte[] validityData = encode( maxInactiveInterval, System.currentTimeMillis(),
-                    System.currentTimeMillis() );
+            final byte[] validityData = encode( maxInactiveInterval, System.currentTimeMillis(), System.currentTimeMillis() );
             // fix for #88, along with the change in session.getMemcachedExpirationTimeToSet
             final int expiration = maxInactiveInterval <= 0 ? 0 : maxInactiveInterval;
+            // 存入validityInfoKey至 memcached
             _memcached.set( validityKey, expiration, validityData );
 
             /*
@@ -252,6 +298,7 @@ public abstract class LockingStrategy {
     }
 
     /**
+     * 
      * Is invoked after the backup of the session is initiated, it's represented by the provided backupResult. The
      * requestId is identifying the request.
      */
@@ -259,6 +306,7 @@ public abstract class LockingStrategy {
             @Nonnull final Future<BackupResult> result, @Nonnull final String requestId,
             @Nonnull final BackupSessionService backupSessionService ) {
 
+    	//sessionid 检查
         if ( !_sessionIdFormat.isValid( session.getIdInternal() ) ) {
             return;
         }
@@ -268,8 +316,7 @@ public abstract class LockingStrategy {
             final long start = System.currentTimeMillis();
 
             final int maxInactiveInterval = session.getMaxInactiveInterval();
-            final byte[] validityData = encode( maxInactiveInterval, session.getLastAccessedTimeInternal(),
-                    session.getThisAccessedTimeInternal() );
+            final byte[] validityData = encode( maxInactiveInterval, session.getLastAccessedTimeInternal(), session.getThisAccessedTimeInternal() );
             final String validityKey = createValidityInfoKeyName( session.getIdInternal() );
             // fix for #88, along with the change in session.getMemcachedExpirationTimeToSet
             final int expiration = maxInactiveInterval <= 0 ? 0 : maxInactiveInterval;
@@ -314,6 +361,11 @@ public abstract class LockingStrategy {
         return loadSessionValidityInfoForValidityKey( createValidityInfoKeyName( sessionId ) );
     }
 
+    /**
+     * 检查 memcached 是否包含该validityInfoKey（validity:+sessionid） 对象
+     * @param validityInfoKey
+     * @return
+     */
     @CheckForNull
     protected SessionValidityInfo loadSessionValidityInfoForValidityKey( @Nonnull final String validityInfoKey ) {
         final byte[] validityInfo = (byte[]) _memcached.get( validityInfoKey );
@@ -382,10 +434,17 @@ public abstract class LockingStrategy {
         _requestsThreadLocal.set( null );
     }
 
+    /**
+     * 测试 该sessionId 在memcached 中是否存在
+     * @param sessionId
+     * @return
+     * @throws InterruptedException
+     */
     private boolean pingSession( @Nonnull final String sessionId ) throws InterruptedException {
         final Future<Boolean> touchResult = _memcached.add( sessionId, 1, 1 );
         try {
             _log.debug( "Got ping result " + touchResult.get() );
+            //不存在
             if ( touchResult.get() ) {
                 _stats.nonStickySessionsPingFailed();
                 _log.warn( "The session " + sessionId
@@ -399,7 +458,13 @@ public abstract class LockingStrategy {
             return false;
         }
     }
-
+    
+    /**
+     *  _memcached.add( session.getIdInternal(), 5, 1 )
+     * @param session
+     * @param backupSessionService
+     * @throws InterruptedException
+     */
     private void pingSession( @Nonnull final MemcachedBackupSession session,
             @Nonnull final BackupSessionService backupSessionService ) throws InterruptedException {
         final Future<Boolean> touchResult = _memcached.add( session.getIdInternal(), 5, 1 );
@@ -600,6 +665,13 @@ public abstract class LockingStrategy {
             return null;
         }
 
+        /**
+         * 测试memcached中是否包含  key ： （"bak:" + sessionId）
+         * 如果存在，则返回false， 反之 true
+         * @param sessionId	sessionId
+         * @return
+         * @throws InterruptedException
+         */
         private boolean pingSessionBackup( @Nonnull final String sessionId ) throws InterruptedException {
             final String key = _sessionIdFormat.createBackupKey( sessionId );
             final Future<Boolean> touchResultFuture = _memcached.add( key, 1, 1 );
