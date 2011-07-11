@@ -21,18 +21,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * 存放 Map<InetSocketAddress, String>, 并提供 根据 InetSocketAddress 查找 nodeId 的方法
  * Resolves an {@link InetSocketAddress} to a memcached node id.
- *
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
 public abstract class NodeIdResolver {
 
     /**
-     * Resolve an {@link InetSocketAddress} to a memcached node id.
-     *
-     * @param address
-     *            the address of the memcached node
-     * @return the memcached node id
+     * 获得 nodeId eg. n1 
+     * @param address  the address of the memcached node
+     * @return 		   the memcached node id
      */
     public abstract String getNodeId( InetSocketAddress address );
 
@@ -91,8 +89,7 @@ public abstract class NodeIdResolver {
     }
 
     /**
-     * A {@link NodeIdResolver} that is based on a node-address to node-id
-     * {@link Map}.
+     * 存放 Map<InetSocketAddress, String>
      */
     public static class MapBasedResolver extends NodeIdResolver {
 

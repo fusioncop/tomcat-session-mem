@@ -328,6 +328,7 @@ class SessionTrackerValve extends ValveBase {
         Future<BackupResult> backupSession( @Nonnull String sessionId, boolean sessionIdChanged, String requestId );
 
         /**
+         * 更新memcache sesion动作执行的成功与否
          * The enumeration of possible backup results.
          */
         static enum BackupResultStatus {
