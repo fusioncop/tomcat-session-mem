@@ -25,6 +25,7 @@ import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 
 /**
+ * Session 有效性信息
  * This class defines the format for session validity information stored in memcached for
  * non-sticky sessions. This information is used when the container (CoyoteAdapter) tries to
  * determine if a provided sessionId is valid when parsing the request.
