@@ -181,16 +181,19 @@ public class Statistics {
         CACHED_DATA_SIZE,
 
         /**
+         * 锁定成功
          * Lock acquiration in non-sticky session mode.
          */
         ACQUIRE_LOCK,
 
         /**
+         * 无法锁定
          * Lock acquiration failures in non-sticky session mode.
          */
         ACQUIRE_LOCK_FAILURE,
 
         /**
+         * 释放锁
          * Lock release in non-sticky session mode.
          */
         RELEASE_LOCK,
