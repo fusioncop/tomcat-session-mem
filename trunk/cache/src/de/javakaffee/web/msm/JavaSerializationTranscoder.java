@@ -40,7 +40,7 @@ import org.apache.juli.logging.LogFactory;
 
 
 /**
- * session attribute 序列化 工具
+ * session and session attribute 序列化 工具
  * @author wangx
  */
 public class JavaSerializationTranscoder implements SessionAttributesTranscoder {
