@@ -96,7 +96,7 @@ public class BackupSessionTask implements Callable<BackupResult> {
     }
 
     /**
-     * {@inheritDoc}
+     * 新增memcache session任务
      */
     public BackupResult call() throws Exception {
         if ( _log.isDebugEnabled() ) {
@@ -158,6 +158,9 @@ public class BackupSessionTask implements Callable<BackupResult> {
 
     }
 
+    /**
+     * 释放锁，释放session锁， memcache 锁
+     */
     private void releaseLock() {
         if ( _session.isLocked()  ) {
             try {
@@ -182,7 +185,7 @@ public class BackupSessionTask implements Callable<BackupResult> {
     }
 
     /**
-     * 更新session至memcache中，并返回结果 BackupResult
+     * 更新memcache session任务
      * Store the provided session in memcached.
      * @param session the session to backup
      * @param data the serialized session data (session fields and session attributes).
