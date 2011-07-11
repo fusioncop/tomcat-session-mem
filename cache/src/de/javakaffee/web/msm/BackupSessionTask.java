@@ -40,8 +40,9 @@ import de.javakaffee.web.msm.BackupSessionTask.BackupResult;
 import de.javakaffee.web.msm.SessionTrackerValve.SessionBackupService.BackupResultStatus;
 
 /**
- * 执行存储session至memcache操作
- * 
+ * 执行存储session至memcache操作的任务类。
+ * 该类实现 Callable 接口 
+ * 返回值 为 BackupResult <br />
  * Stores the provided session in memcached if the session was modified
  * or if the session needs to be relocated (set <code>force</code> to <code>true</code>).
  *
@@ -181,6 +182,7 @@ public class BackupSessionTask implements Callable<BackupResult> {
     }
 
     /**
+     * 更新session至memcache中，并返回结果 BackupResult
      * Store the provided session in memcached.
      * @param session the session to backup
      * @param data the serialized session data (session fields and session attributes).
@@ -214,6 +216,10 @@ public class BackupSessionTask implements Callable<BackupResult> {
 
     /**
      * 存入memcache 中
+     * @throws NodeFailureException
+     */
+    /**
+     * session data 存入memcache 中， 并 更新 MemcachedBackupSession 对象的属性
      * @throws NodeFailureException
      */
     private void storeSessionInMemcached( final MemcachedBackupSession session, final byte[] data) throws NodeFailureException {
@@ -252,6 +258,10 @@ public class BackupSessionTask implements Callable<BackupResult> {
         }
     }
 
+    /**
+     * 该类 更新memcache sesion动作执行的成功与否
+     * 以及session and session attributes 序列化后的数据
+     */
     static final class BackupResult {
 
         public static final BackupResult SKIPPED = new BackupResult( BackupResultStatus.SKIPPED );
