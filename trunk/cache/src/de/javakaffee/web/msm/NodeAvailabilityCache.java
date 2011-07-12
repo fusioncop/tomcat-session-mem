@@ -41,12 +41,13 @@ import org.apache.juli.logging.LogFactory;
 public class NodeAvailabilityCache<K> {
 
     private static final Log LOG = LogFactory.getLog( NodeAvailabilityCache.class );
-
+    
     private final long _ttl;
     private final ConcurrentHashMap<K, ManagedItem<Boolean>> _map;
     private final CacheLoader<K> _cacheLoader;
 
     /**
+     * Node ´æ·Å½Úµã	NodeAvailabilityCache <br/>
      * Create a new LRUCache with a maximum number of cache entries and a
      * specified time to live for cache entries. The TTL is measured from
      * insertion time to access time.

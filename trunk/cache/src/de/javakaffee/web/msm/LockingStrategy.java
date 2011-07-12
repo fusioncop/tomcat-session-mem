@@ -150,7 +150,6 @@ public abstract class LockingStrategy {
         }
         final long start = System.currentTimeMillis();
         try {
-        	//Ëø¶¨ ²Ù×÷
             acquireLock( sessionId, LOCK_RETRY_INTERVAL, LOCK_MAX_RETRY_INTERVAL, timeUnit.toMillis( timeout ), System.currentTimeMillis() );
             _stats.registerSince( ACQUIRE_LOCK, start );
             if ( _log.isDebugEnabled() ) {

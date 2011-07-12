@@ -84,6 +84,7 @@ public class NodeIdService {
     }
 
     /**
+     * 测试 该nodeId 是否有效<br/>
      * Determines, if the given nodeId is available.
      * @param nodeId the node to check, not <code>null</code>.
      * @return <code>true</code>, if the node is marked as available

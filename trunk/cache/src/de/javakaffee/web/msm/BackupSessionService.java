@@ -95,6 +95,7 @@ public class BackupSessionService {
     }
 
     /**
+     * 关闭线程	<br/>
      * Shutdown this service, this stops the possibly existing threads used for session backup.
      */
     public void shutdown() {
@@ -418,7 +419,7 @@ public class BackupSessionService {
         private final ExecutionException _e;
 
         /**
-         * @param result
+         * 简单 异步计算的结果 只包含 返回值，异常类
          */
         public SimpleFuture( final T result ) {
             _result = result;
