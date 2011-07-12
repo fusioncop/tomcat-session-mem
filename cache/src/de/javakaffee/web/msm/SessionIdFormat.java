@@ -50,6 +50,7 @@ public class SessionIdFormat {
     private final Pattern _pattern = Pattern.compile( "[^-.]+-[^.]+(\\.[^.]+)?" );
 
     /**
+     * 根据sessionId 和 memcachedId 创建 新的sessionId
      * Create a session id including the provided memcachedId.
      *
      * @param sessionId
@@ -138,6 +139,7 @@ public class SessionIdFormat {
     }
 
     /**
+     * 从sessionId中提取memcacheId <br/>
      * Extract the memcached id from the given session id.
      *
      * @param sessionId
@@ -163,10 +165,9 @@ public class SessionIdFormat {
     }
 
     /**
+     * 从sessionId中提取tomcat实例名称，eg. sessionId + "." + clusterId <br/>
      * Extract the jvm route from the given session id if existing.
-     *
-     * @param sessionId
-     *            the session id possibly including the memcached id and eventually the
+     * @param sessionId  the session id possibly including the memcached id and eventually the
      *            jvmRoute.
      * @return the jvm route or null if the session id didn't contain any.
      */

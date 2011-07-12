@@ -61,14 +61,14 @@ public final class MemcachedBackupSession extends StandardSession {
     private transient long _thisAccessedTimeFromLastBackupCheck;
 
     /*
-     * session存入memcached 将记录该 session 被序列化前的时间点
+     * 最后一次备份时间
      * Stores the time in millis when this session was stored in memcached, is set
      * before session data is serialized.
      */
     private long _lastBackupTime;
 
     /*
-     * 最后一次更新时间
+     * 最后一次的前一次备份时间（倒数第二次备份时间）
      * The former value of _lastBackupTimestamp which is restored if the session could not be saved
      * in memcached.
      */
@@ -80,7 +80,7 @@ public final class MemcachedBackupSession extends StandardSession {
     private transient int _lastMemcachedExpirationTime;
 
     /*
-     * 是否是更新状态
+     * 是否是期满更新状态
      * Stores, if the sessions expiration is just being updated in memcached
      */
     private volatile transient boolean _expirationUpdateRunning;

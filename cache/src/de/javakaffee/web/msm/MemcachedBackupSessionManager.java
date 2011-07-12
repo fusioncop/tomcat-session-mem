@@ -104,7 +104,7 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     private final LifecycleSupport _lifecycle = new LifecycleSupport( this );
 
     /**
-     * Has this component been _started yet?
+     * 是否启动标识
      */
     protected boolean _started = false;
 
@@ -162,6 +162,7 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     private int _sessionBackupTimeout = 100;
 
     /**
+     * 序列化工具类工厂类名称
      * The class name of the factory for
      * {@link net.spy.memcached.transcoders.Transcoder}s. Default class name is
      * {@link JavaSerializationTranscoderFactory}.
@@ -169,6 +170,7 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     private String _transcoderFactoryClassName = JavaSerializationTranscoderFactory.class.getName();
 
     /**
+     * 序列化集合？ <br/>
      * Specifies, if iterating over collection elements shall be done on a copy
      * of the collection or on the collection itself.
      * <p>
@@ -184,13 +186,15 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
      * </p>
      */
     private boolean _copyCollectionsForSerialization = false;
-
+    //自定义转换类
     private String _customConverterClassNames;
 	// Statistics 控制
     private boolean _enableStatistics = true;
-
+    
+    //备份线程
     private int _backupThreadCount = Runtime.getRuntime().availableProcessors();
 
+    //memcache 协议
     private String _memcachedProtocol = PROTOCOL_TEXT;
 
     // 是否容许创建  memcacheClient
@@ -207,6 +211,8 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     private MemcachedClient _memcached;
 
     /*
+     * 忽略掉 session 缓存？
+     * 
      * findSession may be often called in one request. If a session is requested
      * that we don't have locally stored each findSession invocation would
      * trigger a memcached request - this would open the door for DOS attacks...
@@ -221,20 +227,24 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     //private LRUCache<String, String> _relocatedSessions;
 
     /**
+     * 最大并发session 如果为-1 则不增长
      * The maximum number of active Sessions allowed, or -1 for no limit.
      */
     private int _maxActiveSessions = -1;
-
+    
+    //拒绝的session个数
     private int _rejectedSessions;
 
+    // sessionattribute 序列化管理工具 
     protected TranscoderService _transcoderService;
 
     private TranscoderFactory _transcoderFactory;
-
+    
+    //session序列化管理工具 
     private SerializingTranscoder _upgradeSupportTranscoder;
-
+    //备份memcache
     private BackupSessionService _backupSessionService;
-
+    //是否为单个容器 ？
     private boolean _sticky = true;
     private String _lockingMode;
     private LockingStrategy _lockingStrategy;
@@ -282,6 +292,7 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     }
 
     /**
+     * 容器初始化 方法 	<br/>
      * Initialize this manager. The memcachedClient parameter is there for testing
      * purposes. If the memcachedClient is provided it's used, otherwise a "real"/new
      * memcached client is created based on the configuration (like {@link #setMemcachedNodes(String)} etc.).
@@ -305,7 +316,8 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
         /* create the missing sessions cache
          */
         _missingSessionsCache = new LRUCache<String, Boolean>( 200, 500 );
-
+        
+        //排除不需要过滤的后缀名
         _sessionTrackerValve = new SessionTrackerValve( _requestUriIgnorePattern,
                 (Context) getContainer(), this, _statistics, _enabled );
         getContainer().getPipeline().addValve( _sessionTrackerValve );
@@ -315,7 +327,7 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
         _transcoderService = createTranscoderService( _statistics );
 
         _upgradeSupportTranscoder = getTranscoderFactory().createSessionTranscoder( this );
-
+        //容器启动时，初始化	_backupSessionService;
         _backupSessionService = new BackupSessionService( _transcoderService, _sessionBackupAsync, _sessionBackupTimeout,
                 _backupThreadCount, _memcached, _nodeIdService, _statistics );
 
@@ -352,10 +364,19 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
         return new MemcachedConfig( memcachedNodes, failoverNodes, new NodeIdList( nodeIds ), failoverNodeIds, addresses, address2Ids );
     }
 
+    /**
+     * 获得序列化工具类
+     * @param statistics
+     * @return
+     */
     private TranscoderService createTranscoderService( final Statistics statistics ) {
         return new TranscoderService( getTranscoderFactory().createTranscoder( this ) );
     }
 
+    /**
+     * 获得序列化工厂类
+     * @return
+     */
     protected TranscoderFactory getTranscoderFactory() {
         if ( _transcoderFactory == null ) {
             try {
@@ -368,11 +389,12 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     }
 
     /**
-     * 创建 MemcachedClient, _enabled 为  是否容许创建
+     * 创建 MemcachedClient
      */
     protected MemcachedClient createMemcachedClient( final NodeIdList nodeIds, final List<InetSocketAddress> addresses,
             final Map<InetSocketAddress, String> address2Ids,
             final Statistics statistics ) {
+    	//是否容许创建
         if ( ! _enabled.get() ) {
             return null;
         }
@@ -385,7 +407,7 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     }
 
     /**
-     * 创建 MemcachedClient
+     * 创建 MemcachedClient ConnectionFactory
      */
     private ConnectionFactory createConnectionFactory(
             final NodeIdList nodeIds, final Map<InetSocketAddress, String> address2Ids,
@@ -409,6 +431,11 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
         return transcoderFactory;
     }
 
+    /**
+     * 类加载器，加载序列化工厂类
+     * @return
+     * @throws ClassNotFoundException
+     */
     private Class<? extends TranscoderFactory> loadTranscoderFactoryClass() throws ClassNotFoundException {
         Class<? extends TranscoderFactory> transcoderFactoryClass;
         final ClassLoader classLoader = getContainer().getLoader().getClassLoader();
@@ -422,12 +449,20 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
         return transcoderFactoryClass;
     }
 
+    /**
+     * 
+     * @param size				memcache 节点个数
+     * @param ttlInMillis		在memcache中 存放时间
+     * @param memcachedClient	memcachedClient
+     * @return
+     */
     protected NodeAvailabilityCache<String> createNodeAvailabilityCache( final int size, final long ttlInMillis,
             final MemcachedClient memcachedClient ) {
         return new NodeAvailabilityCache<String>( size, ttlInMillis, new CacheLoader<String>() {
 
-            public boolean isNodeAvailable( final String key ) {
+            public boolean isNodeAvailable( final String  key) {
                 try {
+                	//_sessionIdFormat.createSessionId( "ping", key )  返回 "ping-" + memcachedId;
                     memcachedClient.get( _sessionIdFormat.createSessionId( "ping", key ) );
                     return true;
                 } catch ( final Exception e ) {
@@ -503,8 +538,9 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
 
     }
 
+    
     /**
-     * {@inheritDoc}
+     * 新的sessionId <b>sessionID-memcachedId(.clusterId)?</b>
      */
     @Override
     protected synchronized String generateSessionId() {
@@ -512,7 +548,7 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     }
 
     /**
-     * {@inheritDoc}
+     * 终止session
      */
     @Override
     public void expireSession( final String sessionId ) {
@@ -540,7 +576,9 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
      */
     @Override
     public Session findSession( final String id ) throws IOException {
+    	// 内存中查找MemcachedBackupSession
         MemcachedBackupSession result = (MemcachedBackupSession) super.findSession( id );
+        //内存不存在 && memcached 可用 && 忽略掉_missingSessionsCache不存在
         if ( result == null && canHitMemcached( id ) && _missingSessionsCache.get( id ) == null ) {
             // when the request comes from the container, it's from CoyoteAdapter.postParseRequest
             if ( !_sticky && _lockingStrategy.isContainerSessionLookup() ) {
@@ -559,6 +597,7 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
                 // old sessionId but do that later (in handleSessionTakeOver)
                 // See also http://code.google.com/p/memcached-session-manager/issues/detail?id=92
                 String jvmRoute;
+                //判断session的tomcat实例和本地实例是否相同
                 final boolean sessionIdWillBeChanged = _sticky && ( jvmRoute = getJvmRoute() ) != null
                     && !jvmRoute.equals( _sessionIdFormat.extractJvmRoute( id ) );
 
@@ -568,7 +607,12 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
         }
         return result;
     }
-
+    
+    /**
+     * 重新激活session？
+     * @param session
+     * @param activate
+     */
     private void addValidLoadedSession( final StandardSession session, final boolean activate ) {
         // make sure the listeners know about it. (as done by PersistentManagerBase)
         if ( session.isNew() ) {
@@ -586,7 +630,9 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     }
 
     /**
-     * {@inheritDoc}
+     * 创建一个session
+     * 如果存在，则重新激活，否则新建
+     * 如果sessionID为空，则重新获取sessionID
      */
     @Override
     public Session createSession( String sessionId ) {
@@ -613,7 +659,7 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
             session.setValid( true );
             session.setCreationTime( System.currentTimeMillis() );
             session.setMaxInactiveInterval( this.maxInactiveInterval );
-
+            //新建sessionID
             if ( sessionId == null || !isNodeAvailableForSessionId( sessionId ) ) {
                 sessionId = generateSessionId();
             }
@@ -632,6 +678,9 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
 
     }
 
+    /**
+     * 检查session并发是否达到上限
+     */
     private void checkMaxActiveSessions() {
         if ( _maxActiveSessions >= 0 && sessions.size() >= _maxActiveSessions ) {
             _rejectedSessions++;
@@ -668,13 +717,18 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
      */
     @Override
     public String changeSessionIdOnTomcatFailover( final String requestedSessionId ) {
+    	// 含义
         if ( !_sticky ) {
             return null;
         }
+        // tomcat 实例名称，主要用在cluster中
         final String localJvmRoute = getJvmRoute();
+        //本地tomcat 实例名 不为空， 并且 与sessionid里取出来的取出来 tomcat 实例名 不匹配。
+        //说明没有启用cluster模式？
         if ( localJvmRoute != null && !localJvmRoute.equals( _sessionIdFormat.extractJvmRoute( requestedSessionId ) ) ) {
 
             // the session might have been loaded already (by some valve), so let's check our session map
+        	// 是否已有session
             MemcachedBackupSession session = (MemcachedBackupSession) sessions.get( requestedSessionId );
             if ( session == null ) {
                 session = loadFromMemcachedWithCheck( requestedSessionId );
@@ -714,6 +768,10 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
 
     }
 
+    /**
+     * 清除 memcache session
+     * @param sessionId
+     */
     protected void deleteFromMemcached(final String sessionId) {
         if ( _enabled.get() && _sessionIdFormat.isValid( sessionId ) ) {
             if ( _log.isDebugEnabled() ) {
@@ -893,7 +951,8 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
         if ( !_enabled.get() ) {
             return new SimpleFuture<BackupResult>( BackupResult.SKIPPED );
         }
-
+        
+        //容器 中取 msmSession 
         final MemcachedBackupSession msmSession = (MemcachedBackupSession) sessions.get( sessionId );
         if ( msmSession == null ) {
             _log.debug( "No session found in session map for " + sessionId );
@@ -922,12 +981,23 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
 
         return result;
     }
-
+    
+    /**
+     * 	序列化	MemcachedBackupSession
+     * @param session
+     * @return
+     */
     @Nonnull
     byte[] serialize( @Nonnull final MemcachedBackupSession session ) {
         return _transcoderService.serialize( session );
     }
 
+    /**
+     * 如果 memcached 没有开启，或者  _missingSessionsCache 中不包含该session对象，则返回 null
+     * 否则去 memcached 去查找 该 MemcachedBackupSession
+     * @param sessionId
+     * @return
+     */
     protected MemcachedBackupSession loadFromMemcachedWithCheck( final String sessionId ) {
         if ( !canHitMemcached( sessionId ) || _missingSessionsCache.get( sessionId ) != null ) {
             return null;
@@ -936,6 +1006,7 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     }
 
     /**
+     * 测试 memcache功能是否开启，sessionid是否符合规则 <br/>
      * Checks if this manager {@link #isEnabled()}, if the given sessionId is valid (contains a memcached id)
      * and if this sessionId is not in our missingSessionsCache.
      */
@@ -944,6 +1015,7 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     }
 
     /**
+     * 根据sessionId，从Memcached 去取MemcachedBackupSession并 返回之<br/>
      * Assumes that before you checked {@link #canHitMemcached(String)}.
      */
     private MemcachedBackupSession loadFromMemcached( final String sessionId ) {
@@ -964,6 +1036,7 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
             try {
 
                 if ( !_sticky ) {
+                	//锁定操作
                     lockStatus = _lockingStrategy.onBeforeLoadFromMemcached( sessionId );
                 }
 
@@ -980,6 +1053,7 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
 
                 if ( object != null ) {
                     final MemcachedBackupSession result;
+                    
                     if ( object instanceof MemcachedBackupSession ) {
                         result = (MemcachedBackupSession) object;
                     }
@@ -1032,6 +1106,11 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
         remove( session, session.getNote( NODE_FAILURE ) != Boolean.TRUE );
     }
 
+    /**
+     * 清除 msm session  tomcat session
+     * @param session				session
+     * @param removeFromMemcached	是否清除memcache session
+     */
     private void remove( final Session session, final boolean removeFromMemcached ) {
         if ( _log.isDebugEnabled() ) {
             _log.debug( "remove invoked, removeFromMemcached: " + removeFromMemcached +
@@ -1119,6 +1198,12 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
         return _memcachedNodes;
     }
 
+    /**
+     * 重载 MemcachedConfig
+     * @param memcachedNodes
+     * @param failoverNodes
+     * @return
+     */
     private MemcachedConfig reloadMemcachedConfig( final String memcachedNodes, final String failoverNodes ) {
 
         /* first create all dependent services
@@ -1377,7 +1462,7 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
             _log.info( "Finished reloading configuration." );
         }
     }
-
+    
     protected void setStickyInternal( final boolean sticky ) {
         _sticky = sticky;
     }
@@ -1440,28 +1525,29 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     }
 
     /**
-     * {@inheritDoc}
+     * Lifecycle 实现方法
      */
     public void addLifecycleListener( final LifecycleListener arg0 ) {
         _lifecycle.addLifecycleListener( arg0 );
     }
 
     /**
-     * {@inheritDoc}
+     * Lifecycle 实现方法
      */
     public LifecycleListener[] findLifecycleListeners() {
         return _lifecycle.findLifecycleListeners();
     }
 
     /**
-     * {@inheritDoc}
+     * Lifecycle 实现方法
      */
     public void removeLifecycleListener( final LifecycleListener arg0 ) {
         _lifecycle.removeLifecycleListener( arg0 );
     }
 
     /**
-     * {@inheritDoc}
+     * 容器启动执行
+     * Lifecycle 实现方法
      */
     public void start() throws LifecycleException {
 
@@ -1489,7 +1575,8 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     }
 
     /**
-     * {@inheritDoc}
+     * 关闭执行
+     * Lifecycle 实现方法
      */
     public void stop() throws LifecycleException {
 
@@ -1530,6 +1617,10 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
         }
     }
 
+    /**
+     * 清理缓冲区 ？
+     * @param session
+     */
     private void swapOut( @Nonnull final StandardSession session ) {
         // implementation like the one in PersistentManagerBase.swapOut
         if (!session.isValid()) {

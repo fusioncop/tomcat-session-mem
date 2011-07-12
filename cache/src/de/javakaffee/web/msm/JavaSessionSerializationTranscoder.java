@@ -30,7 +30,7 @@ import org.apache.catalina.session.StandardSession;
 import org.apache.catalina.util.CustomObjectInputStream;
 
 /**
- * MemcachedBackupSession 反序列化
+ * MemcachedBackupSession（Manager 尤为重要） 反序列化
  * A {@link net.spy.memcached.transcoders.Transcoder} that serializes catalina
  * {@link StandardSession}s using java serialization (and the serialization of
  * {@link StandardSession} via {@link StandardSession#writeObjectData(ObjectOutputStream)}
@@ -40,7 +40,8 @@ import org.apache.catalina.util.CustomObjectInputStream;
  * @version $Id$
  */
 public class JavaSessionSerializationTranscoder extends SessionTranscoder {
-
+	
+	//session管理的控制器
     private final Manager _manager;
 
     /**

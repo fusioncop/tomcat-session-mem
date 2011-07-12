@@ -40,6 +40,7 @@ import org.apache.juli.logging.LogFactory;
 import de.javakaffee.web.msm.BackupSessionTask.BackupResult;
 
 /**
+ * 用来跟踪 requests，因为session 必须要被放入memcached
  * This valve is used for tracking requests for that the session must be sent to
  * memcached.
  *
@@ -51,10 +52,11 @@ class SessionTrackerValve extends ValveBase {
     static final String RELOCATE = "session.relocate";
 
     private final Log _log = LogFactory.getLog( MemcachedBackupSessionManager.class );
-
+    //正则规则
     private final Pattern _ignorePattern;
     private final SessionBackupService _sessionBackupService;
     private final Statistics _statistics;
+    // 是否开启该功能
     private final AtomicBoolean _enabled;
     private final String _sessionCookieName;
     private @CheckForNull LockingStrategy _lockingStrategy;
@@ -91,6 +93,11 @@ class SessionTrackerValve extends ValveBase {
         _sessionCookieName = getSessionCookieName( context );
     }
 
+    /**
+     * cookieName 如果为空，则返回 全局 Globals.SESSION_COOKIE_NAME<br/>
+     * @param context
+     * @return
+     */
     private String getSessionCookieName( final Context context ) {
         String result = getSessionCookieNameFromContext( context );
         if ( result == null ) {
@@ -100,6 +107,11 @@ class SessionTrackerValve extends ValveBase {
         return result;
     }
 
+    /**
+     * 获得cookieName<br/>
+     * @param context
+     * @return
+     */
     protected String getSessionCookieNameFromContext( final Context context ) {
         // since 6.0.27 the session cookie name, domain and path is configurable per context,
         // see issue http://issues.apache.org/bugzilla/show_bug.cgi?id=48379
@@ -119,6 +131,7 @@ class SessionTrackerValve extends ValveBase {
     }
 
     /**
+     * 取变量 _sessionCookieName  值 <br/>
      * Returns the actually used name for the session cookie.
      * @return the cookie name, never null.
      */
@@ -131,7 +144,7 @@ class SessionTrackerValve extends ValveBase {
      */
     @Override
     public void invoke( final Request request, final Response response ) throws IOException, ServletException {
-
+    	// （未开启功能 || 匹配规则）  则忽略掉，执行下个value 操作
         if ( !_enabled.get() || _ignorePattern != null && _ignorePattern.matcher( request.getRequestURI() ).matches() ) {
             getNext().invoke( request, response );
         } else {
@@ -174,19 +187,30 @@ class SessionTrackerValve extends ValveBase {
         }
     }
 
+    /**
+     * url地址（包含get的参数）
+     * @param request
+     * @return
+     */
     @Nonnull
     protected static String getURIWithQueryString( @Nonnull final Request request ) {
         final String uri = request.getRequestURI();
         final String qs = request.getMethod().toLowerCase().equals( "post" ) ? null : request.getQueryString();
         return qs != null ? uri + "?" + qs : uri;
     }
-
+    
+    /**
+     * 清除request 线程变量
+     */
     private void resetRequestThreadLocal() {
         if ( _lockingStrategy != null ) {
             _lockingStrategy.onRequestFinished();
         }
     }
-
+    
+    /**
+     * 保存request 线程变量
+     */
     private void storeRequestThreadLocal( @Nonnull final Request request ) {
         if ( _lockingStrategy != null ) {
             _lockingStrategy.onRequestStart( request );
