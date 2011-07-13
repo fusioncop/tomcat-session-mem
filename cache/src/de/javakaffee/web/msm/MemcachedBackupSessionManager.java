@@ -231,7 +231,7 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     private SerializingTranscoder _upgradeSupportTranscoder;
     //备份memcache
     private BackupSessionService _backupSessionService;
-    //是否为单个容器 ？
+    //是否启用该组件功能
     private boolean _sticky = true;
     private String _lockingMode;
     private LockingStrategy _lockingStrategy;
@@ -538,7 +538,7 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     }
 
     /**
-     * 终止session
+     * 销毁session
      */
     @Override
     public void expireSession( final String sessionId ) {
@@ -1622,14 +1622,18 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     }
 
     /**
-     * {@inheritDoc}
+     * org.apache.catalina.core.StandardContext.backgroundProcess())该方法中调用之，后台程序
+     * 后台程序定时检查。。。时间戳和会话对象是否超期
      */
     @Override
     public void backgroundProcess() {
         updateExpirationInMemcached();
         super.backgroundProcess();
     }
-
+    
+    /**
+     * 更新memcache session
+     */
     protected void updateExpirationInMemcached() {
         if ( _enabled.get() && _sticky ) {
             final Session[] sessions = findSessions();
