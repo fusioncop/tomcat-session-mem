@@ -26,7 +26,7 @@ import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 
 /**
- * sessionid 帮助类
+ * sessionid 帮助类 <br/>
  * This class defines the session id format: It creates session ids based on the
  * original session id and the memcached id, and it extracts the session id and
  * memcached id from a compound session id.
@@ -51,14 +51,10 @@ public class SessionIdFormat {
 
     /**
      * 根据sessionId 和 memcachedId 创建 新的sessionId
-     * Create a session id including the provided memcachedId.
-     *
-     * @param sessionId
-     *            the original session id, it might contain the jvm route
-     * @param memcachedId
-     *            the memcached id to encode in the session id, may be <code>null</code>.
-     * @return the sessionId which now contains the memcachedId if one was provided, otherwise
-     *  the sessionId unmodified.
+     * SESSIONID的格式：sessionID-memcachedId(.clusterId)?
+     * @param sessionId		有可能包含jvmRouteID
+     * @param memcachedId	MemcachedId
+     * @return
      */
     @Nonnull
     public String createSessionId( @Nonnull final String sessionId, @Nullable final String memcachedId ) {
@@ -77,29 +73,32 @@ public class SessionIdFormat {
     }
 
     /**
-     * Change the provided session id (optionally already including a memcachedId) so that it
-     * contains the provided newMemcachedId.
-     *
-     * @param sessionId
-     *            the session id that may contain a former memcachedId.
-     * @param newMemcachedId
-     *            the new memcached id.
-     * @return the sessionId which now contains the new memcachedId instead the
-     *         former one.
+     * 根据sessionId 和 新的memcachedId 创建 新的sessionId
+     * @param sessionId			有可能包含jvmRouteID
+     * @param newMemcachedId	新的MemcachedId
+     * @return
      */
     @Nonnull
     public String createNewSessionId( @Nonnull final String sessionId, @Nonnull final String newMemcachedId ) {
         final int idxDot = sessionId.indexOf( '.' );
+        //包含 jvmRouteID
         if ( idxDot != -1 ) {
             final String plainSessionId = sessionId.substring( 0, idxDot );
             final String jvmRouteWithDot = sessionId.substring( idxDot );
             return appendOrReplaceMemcachedId( plainSessionId, newMemcachedId ) + jvmRouteWithDot;
         }
+        //不包含 jvmRouteID
         else {
             return appendOrReplaceMemcachedId( sessionId, newMemcachedId );
         }
     }
 
+    /**
+     * 将不包含	jvmRouteID 的sessionID 和 newMemcachedId 组合成新的sessionID
+     * @param sessionId			不包含	jvmRouteID
+     * @param newMemcachedId	newMemcachedId
+     * @return
+     */
     @Nonnull
     private String appendOrReplaceMemcachedId( @Nonnull final String sessionId, @Nonnull final String newMemcachedId ) {
         final int idxDash = sessionId.indexOf( '-' );
@@ -111,15 +110,10 @@ public class SessionIdFormat {
     }
 
     /**
-     * Change the provided session id (optionally already including a jvmRoute) so that it
-     * contains the provided newJvmRoute.
-     *
+     * 去掉 sessionId 中包含 的旧的jvmRouteID, 并添加新的newJvmRouteID
      * @param sessionId
-     *            the session id that may contain a former jvmRoute.
      * @param newJvmRoute
-     *            the new jvm route.
-     * @return the sessionId which now contains the new jvmRoute instead the
-     *         former one.
+     * @return
      */
     @Nonnull
     public String changeJvmRoute( @Nonnull final String sessionId, @Nonnull final String newJvmRoute ) {
@@ -127,12 +121,9 @@ public class SessionIdFormat {
     }
 
     /**
-     * Checks if the given session id matches the pattern
-     * <code>[^-.]+-[^.]+(\.[\w]+)?</code>.
-     *
+     * 检查sessionID是否符合 sessionID的规则（sessionID-memcachedId(.clusterId)?）
      * @param sessionId
-     *            the session id
-     * @return true if matching, otherwise false.
+     * @return
      */
     public boolean isValid( @Nullable final String sessionId ) {
         return sessionId != null && _pattern.matcher( sessionId ).matches();
@@ -140,13 +131,8 @@ public class SessionIdFormat {
 
     /**
      * 从sessionId中提取memcacheId <br/>
-     * Extract the memcached id from the given session id.
-     *
-     * @param sessionId
-     *            the session id including the memcached id and eventually the
-     *            jvmRoute.
-     * @return the memcached id or null if the session id didn't contain any
-     *         memcached id.
+     * @param sessionId	sessionId
+     * @return
      */
     @CheckForNull
     public String extractMemcachedId( @Nonnull final String sessionId ) {
@@ -165,7 +151,8 @@ public class SessionIdFormat {
     }
 
     /**
-     * 从sessionId中提取tomcat实例名称，eg. sessionId + "." + clusterId <br/>
+     * 从sessionId中提取jvmRouteID 
+     * eg. sessionId + "." + jvmRouteID <br/>
      * Extract the jvm route from the given session id if existing.
      * @param sessionId  the session id possibly including the memcached id and eventually the
      *            jvmRoute.
@@ -178,12 +165,9 @@ public class SessionIdFormat {
     }
 
     /**
-     * Remove the jvm route from the given session id if existing.
-     *
-     * @param sessionId
-     *            the session id possibly including the memcached id and eventually the
-     *            jvmRoute.
-     * @return the session id without the jvm route.
+     * 去掉 sessionId 中包含 的jvmRouteID 
+     * @param sessionId	 sessionId
+     * @return
      */
     @Nonnull
     public String stripJvmRoute( @Nonnull final String sessionId ) {
@@ -192,9 +176,9 @@ public class SessionIdFormat {
     }
 
     /**
-     * Creates the name/key that can be used for the lock stored in memcached.
-     * @param sessionId the session id for that a lock key shall be created.
-     * @return a String.
+     * 获得锁名称（"lock:" + sessionId）---用来存放于memcached中
+     * @param sessionId
+     * @return
      */
     @Nonnull
     public String createLockName( @Nonnull final String sessionId ) {
@@ -205,6 +189,7 @@ public class SessionIdFormat {
     }
 
     /**
+     * 获得锁名称（"bak:" + sessionId）---用来存放于memcached中
      * Creates the name/key that is used for the data (session or validity info)
      * that is additionally stored in a secondary memcached node for non-sticky sessions.
      * @param origKey the session id (or validity info key) for that a key shall be created.
@@ -219,7 +204,9 @@ public class SessionIdFormat {
     }
 
     /**
-     * Determines, if the given key is a backup key, if it was created via {@link #createBackupKey(String)}.
+     * 验证是否为BackupKey
+     * @param key
+     * @return
      */
     public boolean isBackupKey( @Nonnull final String key ) {
         return key.startsWith( BACKUP_PREFIX );
