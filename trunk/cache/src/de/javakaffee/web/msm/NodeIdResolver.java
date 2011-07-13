@@ -96,10 +96,8 @@ public abstract class NodeIdResolver {
         private final Map<InetSocketAddress, String> _address2Ids;
 
         /**
-         * Creates a new {@link MapBasedResolver} with the given addresses.
-         *
-         * @param address2Ids
-         *            the mapping of addresses to node ids.
+         * 存放 Map<InetSocketAddress, String>, 并提供 根据 InetSocketAddress 查找 nodeId 的方法
+         * @param address2Ids the mapping of addresses to node ids.
          */
         public MapBasedResolver( final Map<InetSocketAddress, String> address2Ids ) {
             _address2Ids = address2Ids;

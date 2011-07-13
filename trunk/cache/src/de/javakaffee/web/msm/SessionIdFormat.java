@@ -27,7 +27,7 @@ import org.apache.juli.logging.LogFactory;
 
 /**
  * sessionid 帮助类 ：
- * 原始的sessionid包括sessionid+"."+clusterId,
+ * 原始的sessionid包括<b>sessionid+"."+clusterId</b>,
  * 被包装后的sessionid为<b>sessionID-memcachedId(.clusterId)? </b>
  * <br/>
  * This class defines the session id format: It creates session ids based on the
