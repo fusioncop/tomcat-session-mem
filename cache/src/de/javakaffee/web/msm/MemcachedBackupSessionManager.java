@@ -113,16 +113,16 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     // -------------------- configuration properties --------------------
 
     /**
-     * memcached 节点名称：ip：port
+     * 配置文件中memcached 节点名称：ip：port
      *  e.g. n1:localhost:11211 n2:localhost:11212
-     *
+     *	多个节点之间以<b>&nbsp;</b>为分隔符
      */
     private String _memcachedNodes;
 
     /**
-     * 失效的节点，<code>n1 n2</code>
+     * 配置文件中失效的节点，<code>n1 |,n2</code> 多个节点之间以<b>&nbsp;|,</b>为分隔符
      * The ids of memcached failover nodes separated by space, e.g.
-     * <code>n1 n2</code>
+     * <code>n1 |,n2</code>
      *
      */
     private String _failoverNodes;
@@ -135,29 +135,16 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     private String _requestUriIgnorePattern;
 
     /**
-     * 异步
-     * Specifies if the session shall be stored asynchronously in memcached as
-     * {@link MemcachedClient#set(String, int, Object)} supports it. If this is
-     * false, the timeout set via {@link #setSessionBackupTimeout(int)} is
-     * evaluated. If this is <code>true</code>, the {@link #setBackupThreadCount(int)}
-     * is evaluated.
-     * <p>
-     * By default this property is set to <code>true</code> - the session
-     * backup is performed asynchronously.
-     * </p>
+     * 存入memecached的动作是异步还是同步
+     * if true 异步操作	
+     * if flase 同步操作 检查是否在指定的超时时间内（<b>_sessionBackupTimeout</b>）
+     * 执行完该动作，否则认为是未执行成功
      */
     private boolean _sessionBackupAsync = true;
 
     /**
-     * The timeout in milliseconds after that a session backup is considered as
-     * beeing failed.
-     * <p>
-     * This property is only evaluated if sessions are stored synchronously (set
-     * via {@link #setSessionBackupAsync(boolean)}).
-     * </p>
-     * <p>
+     * 存入memecached的超时时间 单位为<code>毫秒</code>
      * The default value is <code>100</code> millis.
-     * </p>
      */
     private int _sessionBackupTimeout = 100;
 
@@ -170,7 +157,7 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     private String _transcoderFactoryClassName = JavaSerializationTranscoderFactory.class.getName();
 
     /**
-     * 序列化集合？ <br/>
+     * 序列化集合？ 本版本无作用<br/>
      * Specifies, if iterating over collection elements shall be done on a copy
      * of the collection or on the collection itself.
      * <p>
@@ -197,7 +184,7 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     //memcache 协议
     private String _memcachedProtocol = PROTOCOL_TEXT;
 
-    // 是否容许创建  memcacheClient
+    // memcacheClient 总开关，是否启用
     private final AtomicBoolean _enabled = new AtomicBoolean( true );
 
     // -------------------- END configuration properties --------------------
@@ -342,15 +329,17 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
      * @return
      */
     protected static MemcachedConfig createMemcachedConfig( final String memcachedNodes, final String failoverNodes ) {
-        if ( !NODES_PATTERN.matcher( memcachedNodes ).matches() ) {
+        //至少一个节点
+    	if ( !NODES_PATTERN.matcher( memcachedNodes ).matches() ) {
             throw new IllegalArgumentException( "Configured memcachedNodes attribute has wrong format, must match " + NODES_REGEX );
         }
-
+        
         final List<String> nodeIds = new ArrayList<String>();
         final Matcher matcher = NODE_PATTERN.matcher( memcachedNodes  );
         final List<InetSocketAddress> addresses = new ArrayList<InetSocketAddress>();
         final Map<InetSocketAddress, String> address2Ids = new HashMap<InetSocketAddress, String>();
         while ( matcher.find() ) {
+        	//该处只取了配置文件中的第一个节点
             initHandleNodeDefinitionMatch( matcher, addresses, address2Ids, nodeIds );
         }
 
@@ -414,6 +403,7 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
             final Statistics statistics ) {
         final MapBasedResolver resolver = new MapBasedResolver( address2Ids );
         if ( PROTOCOL_BINARY.equals( _memcachedProtocol ) ) {
+        	// 本版不建议使用
             return new SuffixLocatorBinaryConnectionFactory( nodeIds, resolver, _sessionIdFormat, statistics );
         }
         return new SuffixLocatorConnectionFactory( nodeIds, resolver, _sessionIdFormat, statistics );
@@ -497,7 +487,7 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
 
     /**
      * 将匹配的memcache节点：nodeId, host, port 都拆分开来，
-     * 并放入响应的集合中
+     * 并放入响应的集合中该处只取了配置文件中的第一个节点
      * @param matcher		正则 对象
      * @param addresses		存放Inet<Inet>地址 集合
      * @param address2Ids	存放<Inet地址, 'n1'> 集合
@@ -1996,13 +1986,17 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
      * Memcached 节点信息配置信息
      */
         private static class MemcachedConfig {
-        // 所有节点信息
+        // 配置文件中的节点配置字符串
     	private final String _memcachedNodes;
-    	// 错误节点信息
+    	// 配置文件中的错误节点字符串
         private final String _failoverNodes;
+        // 根据配置文件，计算出所有的可用节点集合
         private final NodeIdList _nodeIds;
+        // 将_failoverNodes字符串解析为 集合
         private final List<String> _failoverNodeIds;
+        // 所有节点的 IP 套接字地址集合
         private final List<InetSocketAddress> _addresses;
+        // 所有节点MAP：其中key为 IP 套接字地址集合,value 为 node节点信息
         private final Map<InetSocketAddress, String> _address2Ids;
        
         /**
