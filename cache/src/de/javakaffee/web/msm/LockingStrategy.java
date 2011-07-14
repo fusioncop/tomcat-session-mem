@@ -247,7 +247,8 @@ public abstract class LockingStrategy {
     }
 
     /**
-     *TODO  待定
+     * 容器中没有session的情况下，只检查 有效性session 和  备份的有效性sesson
+     *  
      * Is invoked for the backup of a non-sticky session that was not accessed for the current request.
      */
     protected void onBackupWithoutLoadedSession( @Nonnull final String sessionId, @Nonnull final String requestId,
@@ -260,7 +261,7 @@ public abstract class LockingStrategy {
         try {
 
             final long start = System.currentTimeMillis();
-
+            //查找
             final String validityKey = createValidityInfoKeyName( sessionId );
             final SessionValidityInfo validityInfo = loadSessionValidityInfoForValidityKey( validityKey );
             if ( validityInfo == null ) {
@@ -313,7 +314,8 @@ public abstract class LockingStrategy {
         try {
 
             final long start = System.currentTimeMillis();
-
+            
+            // 更新 validityKey 
             final int maxInactiveInterval = session.getMaxInactiveInterval();
             final byte[] validityData = encode( maxInactiveInterval, session.getLastAccessedTimeInternal(), session.getThisAccessedTimeInternal() );
             final String validityKey = createValidityInfoKeyName( session.getIdInternal() );
@@ -355,13 +357,18 @@ public abstract class LockingStrategy {
         return _requestsThreadLocal.get() == null;
     }
 
+    /**
+     * 加载有效备份sessionid 信息
+     * @param sessionId
+     * @return
+     */
     @CheckForNull
     protected SessionValidityInfo loadSessionValidityInfo( @Nonnull final String sessionId ) {
         return loadSessionValidityInfoForValidityKey( createValidityInfoKeyName( sessionId ) );
     }
 
     /**
-     * 检查 memcached 是否包含该validityInfoKey（validity:+sessionid） 对象
+     * 从 memcached 查找  备份的session 有效性（"bak:" + "validity:" + sessionid） 对象
      * @param validityInfoKey
      * @return
      */
@@ -371,6 +378,11 @@ public abstract class LockingStrategy {
         return validityInfo != null ? decode( validityInfo ) : null;
     }
 
+    /**
+     * 根据sessionid查找 备份的session 有效性  对象
+     * @param sessionId
+     * @return
+     */
     @CheckForNull
     protected SessionValidityInfo loadBackupSessionValidityInfo( @Nonnull final String sessionId ) {
         final String key = createValidityInfoKeyName( sessionId );
@@ -379,6 +391,7 @@ public abstract class LockingStrategy {
     }
 
     /**
+     * 锁定操作
      * Invoked before the session for this sessionId is loaded from memcached.
      */
     @CheckForNull
@@ -386,6 +399,7 @@ public abstract class LockingStrategy {
             ExecutionException;
 
     /**
+     * 如果session 还有效........
      * Invoked after a non-sticky session is loaded from memcached, can be used to update some session fields based on
      * separately stored information (e.g. session validity info).
      *
@@ -408,6 +422,13 @@ public abstract class LockingStrategy {
         }
     }
 
+    /**
+     * manager 中调用在删除memcache中 sessionid 对象后，
+     * 删除 "validity:" + sessionId; 有效性  对象 
+     * 删除 "bak:" + sessionId;
+     * 删除 "bak:" + "validity:" + sessionId;
+     * @param sessionId
+     */
     /**
      * Invoked after a non-sticky session is removed from memcached.
      */
@@ -459,7 +480,8 @@ public abstract class LockingStrategy {
     }
     
     /**
-     *  _memcached.add( session.getIdInternal(), 5, 1 )
+     * 首先检查memcached 是否包含 session.getIdInternal()
+     * 不包含的情况下，才将session 更新至memcached中
      * @param session
      * @param backupSessionService
      * @throws InterruptedException
@@ -481,6 +503,12 @@ public abstract class LockingStrategy {
         }
     }
 
+    /**
+     * 备份session对象到 memcached
+     * @param session
+     * @param backupSessionService
+     * @throws InterruptedException
+     */
     private void updateSession( @Nonnull final MemcachedBackupSession session,
             @Nonnull final BackupSessionService backupSessionService ) throws InterruptedException {
         final Future<BackupResult> result = backupSessionService.backupSession( session, true );
@@ -493,6 +521,9 @@ public abstract class LockingStrategy {
         }
     }
 
+    /**
+     * session 备份后执行的操作
+     */
     private final class OnAfterBackupSessionTask implements Callable<Void> {
 
         private final MemcachedBackupSession _session;
@@ -503,6 +534,9 @@ public abstract class LockingStrategy {
         private final String _validityKey;
         private final byte[] _validityData;
 
+        /**
+         * session 备份后执行的操作
+         */
         private OnAfterBackupSessionTask( @Nonnull final MemcachedBackupSession session, @Nonnull final Future<BackupResult> result,
                 final boolean pingSessionIfBackupWasSkipped,
                 @Nonnull final BackupSessionService backupSessionService,
@@ -538,9 +572,11 @@ public abstract class LockingStrategy {
                     if ( _log.isDebugEnabled() ) {
                         _log.debug( "Storing backup in secondary memcached for non-sticky session " + _session.getId() );
                     }
+                    // 前一个操作被忽略的情况下
                     if ( backupResult.getStatus() == BackupResultStatus.SKIPPED ) {
                         pingSessionBackup( _session );
                     }
+                    //
                     else {
                         saveSessionBackupFromResult( backupResult );
                     }
@@ -558,6 +594,10 @@ public abstract class LockingStrategy {
             return null;
         }
 
+        /**
+         *  重新在memcached中放入 session 操作 
+         * @param backupResult
+         */
         public void saveSessionBackupFromResult( final BackupResult backupResult ) {
             final byte[] data = backupResult.getData();
             if ( data != null ) {
@@ -571,6 +611,10 @@ public abstract class LockingStrategy {
             }
         }
 
+        /**
+         * 保存 "bak: " + "validity:" + sessionid;
+         * 有效性备份session
+         */
         public void saveValidityBackup() {
             final String backupValidityKey = _sessionIdFormat.createBackupKey( _validityKey );
             final int maxInactiveInterval = _session.getMaxInactiveInterval();
@@ -579,6 +623,12 @@ public abstract class LockingStrategy {
             _memcached.set( backupValidityKey, expiration, _validityData );
         }
 
+        /**
+         * 测试  是否包含 "bak:" + sessionid 
+         * 不存在的情况下执行 session 备份
+         * @param session
+         * @throws InterruptedException
+         */
         private void pingSessionBackup( @Nonnull final MemcachedBackupSession session ) throws InterruptedException {
             final String key = _sessionIdFormat.createBackupKey( session.getId() );
             final Future<Boolean> touchResultFuture = _memcached.add( key, 5, 1 );
@@ -599,6 +649,12 @@ public abstract class LockingStrategy {
             }
         }
 
+        /**
+         * 备份 session 至 memcachesd
+         * @param session
+         * @param key
+         * @throws InterruptedException
+         */
         public void saveSessionBackup( @Nonnull final MemcachedBackupSession session, @Nonnull final String key )
                 throws InterruptedException {
             try {
@@ -613,6 +669,11 @@ public abstract class LockingStrategy {
         }
     }
 
+    /**
+     * memcached 是否包含session对象
+     * 是否包含备份的session
+     * 更新备份后的有效性session
+     */
     private final class OnBackupWithoutLoadedSessionTask implements Callable<Void> {
 
         private final String _sessionId;
@@ -635,7 +696,8 @@ public abstract class LockingStrategy {
 
         @Override
         public Void call() throws Exception {
-
+        	
+        	// memcached 是否包含session对象
             pingSession( _sessionId );
 
             /*
@@ -644,12 +706,13 @@ public abstract class LockingStrategy {
              */
             if ( _storeSecondaryBackup ) {
                 try {
-
+                	//是否包含备份的session
                     pingSessionBackup( _sessionId );
 
                     final String backupValidityKey = _sessionIdFormat.createBackupKey( _validityKey );
                     // fix for #88, along with the change in session.getMemcachedExpirationTimeToSet
                     final int expiration = _maxInactiveInterval <= 0 ? 0 : _maxInactiveInterval;
+                    //更新备份后的有效性session
                     _memcached.set( backupValidityKey, expiration, _validityData );
 
                 } catch( final NodeFailureException e ) {
