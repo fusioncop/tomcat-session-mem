@@ -1642,9 +1642,10 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     }
     
     /**
-     * 更新memcache session
+     * session 会话超时检查
      */
     protected void updateExpirationInMemcached() {
+    	System.out.println("------------->updateExpirationInMemcached()");
         if ( _enabled.get() && _sticky ) {
             final Session[] sessions = findSessions();
             final int delay = getContainer().getBackgroundProcessorDelay();
