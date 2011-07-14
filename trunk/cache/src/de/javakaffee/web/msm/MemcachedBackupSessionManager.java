@@ -940,7 +940,8 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
      * @return the {@link SessionTrackerValve.SessionBackupService.BackupResultStatus}
      */
     public Future<BackupResult> backupSession( final String sessionId, final boolean sessionIdChanged, final String requestId ) {
-        if ( !_enabled.get() ) {
+        //没有开启memcached
+    	if ( !_enabled.get() ) {
             return new SimpleFuture<BackupResult>( BackupResult.SKIPPED );
         }
         
@@ -953,12 +954,12 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
             }
             return new SimpleFuture<BackupResult>( BackupResult.SKIPPED );
         }
-
+        //session 无效
         if ( !msmSession.isValidInternal() ) {
             _log.debug( "Non valid session found in session map for " + sessionId );
             return new SimpleFuture<BackupResult>( BackupResult.SKIPPED );
         }
-
+        
         if ( !_sticky ) {
             msmSession.passivate();
         }
