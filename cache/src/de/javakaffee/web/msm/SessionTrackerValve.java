@@ -271,6 +271,11 @@ class SessionTrackerValve extends ValveBase {
 
     }
 
+    /**
+     * cookie÷–»°sessionid
+     * @param response
+     * @return
+     */
     private String getSessionIdFromResponseSessionCookie( final Response response ) {
         final String header = response.getHeader( "Set-Cookie" );
         if ( header != null && header.contains( _sessionCookieName ) ) {

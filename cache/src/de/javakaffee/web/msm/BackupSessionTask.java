@@ -55,6 +55,7 @@ public class BackupSessionTask implements Callable<BackupResult> {
     private final SessionIdFormat _sessionIdFormat = new SessionIdFormat();
 
     private final MemcachedBackupSession _session;
+    // 超时检查是  _force 为true
     private final boolean _force;
     private final TranscoderService _transcoderService;
     private final boolean _sessionBackupAsync;
@@ -217,10 +218,6 @@ public class BackupSessionTask implements Callable<BackupResult> {
         }
     }
 
-    /**
-     * 存入memcache 中
-     * @throws NodeFailureException
-     */
     /**
      * session data 存入memcache 中， 并 更新 MemcachedBackupSession 对象的属性
      * @throws NodeFailureException
