@@ -92,6 +92,7 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
   //多个 memcachedNodes 正则 Pattern 对象
     private static final Pattern NODES_PATTERN = Pattern.compile( NODES_REGEX );
 
+    //memcached 有效性检查的间隔时间 （毫秒）
     private static final int NODE_AVAILABILITY_CACHE_TTL = 50;
 
     private static final String PROTOCOL_TEXT = "text";
@@ -235,7 +236,8 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     private boolean _sticky = true;
     private String _lockingMode;
     private LockingStrategy _lockingStrategy;
-
+    
+    //启动时，初始化加入容器中
     private SessionTrackerValve _sessionTrackerValve;
 
 
@@ -441,7 +443,7 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
 
     /**
      * 
-     * @param size				memcache 节点个数
+     * @param size				memcache 节点个数(包括可用和不可用)
      * @param ttlInMillis		在memcache中 存放时间
      * @param memcachedClient	memcachedClient
      * @return
