@@ -145,6 +145,7 @@ class SessionTrackerValve extends ValveBase {
     @Override
     public void invoke( final Request request, final Response response ) throws IOException, ServletException {
     	// （未开启功能 || 匹配规则）  则忽略掉，执行下个value 操作
+    	
         if ( !_enabled.get() || _ignorePattern != null && _ignorePattern.matcher( request.getRequestURI() ).matches() ) {
             getNext().invoke( request, response );
         } else {
@@ -218,6 +219,8 @@ class SessionTrackerValve extends ValveBase {
     }
 
     /**
+     * 
+     * 检查sessionID对应的tomcat或者memcached 是否有效  <br/>
      * If there's a session for a requested session id that is taken over (tomcat failover) or
      * that will be relocated (memcached failover), the new session id will be set (via {@link Request#changeSessionId(String)}).
      *
@@ -299,6 +302,7 @@ class SessionTrackerValve extends ValveBase {
     public static interface SessionBackupService {
 
         /**
+         * 检查sessionid中是否属于本地的jvmRoute,如果不是，则改变sessionid
          * Check if the given session id does not belong to this tomcat (according to the
          * local jvmRoute and the jvmRoute in the session id). If the session contains a
          * different jvmRoute load if from memcached. If the session was found in memcached and
