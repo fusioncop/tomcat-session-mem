@@ -43,7 +43,7 @@ public class MemcachedTest {
 
     public static void main( final String[] args ) throws IOException, InterruptedException, ExecutionException {
         final MemcachedClient client = new MemcachedClient( new DefaultConnectionFactory(),
-                Arrays.asList( new InetSocketAddress( "192.168.119.169", 11211 ) ) );
+                Arrays.asList( new InetSocketAddress( "192.168.119.170", 11211 ) , new InetSocketAddress( "192.168.119.166", 11211 )) );
         final AtomicLong t = new AtomicLong();
         final SerializingTranscoder transcoder = new SerializingTranscoder() {
             @Override
@@ -76,7 +76,6 @@ public class MemcachedTest {
 
         final int numValues = 40;
         final String[] values = createValues( numValues );
-
         final int numThreads = 2;
         final ExecutorService executor = Executors.newFixedThreadPool( numThreads );
         try {

@@ -715,6 +715,8 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
         }
         // tomcat 实例名称，主要用在cluster中
         final String localJvmRoute = getJvmRoute();
+        //单机测试为null;
+        System.out.println("------>localJvmRoute:"+localJvmRoute);
         //本地tomcat 实例名 不为空， 并且 与sessionid里取出来的取出来 tomcat 实例名 不匹配。
         //说明没有启用cluster模式？
         if ( localJvmRoute != null && !localJvmRoute.equals( _sessionIdFormat.extractJvmRoute( requestedSessionId ) ) ) {
@@ -833,27 +835,35 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
         return null;
     }
 
+    /**
+     * 加载session信息
+     * @param requestedSessionId
+     * @return
+     */
     @CheckForNull
     private MemcachedBackupSession loadBackupSession( @Nonnull final String requestedSessionId ) {
 
         final String backupNodeId = getBackupNodeId( requestedSessionId );
+        //验证nodeid 不为空
         if ( backupNodeId == null ) {
             _log.info( "No backup node found for nodeId "+ _sessionIdFormat.extractMemcachedId( requestedSessionId ) );
             return null;
         }
-
+        
+        //验证可用
         if ( !_nodeIdService.isNodeAvailable( backupNodeId ) ) {
             _log.info( "Node "+ backupNodeId +" that stores the backup of the session "+ requestedSessionId +" is not available." );
             return null;
         }
 
         try {
+        	//session有效性信息
             final SessionValidityInfo validityInfo = _lockingStrategy.loadBackupSessionValidityInfo( requestedSessionId );
             if ( validityInfo == null || !validityInfo.isValid() ) {
                 _log.info( "No validity info (or no valid one) found for sessionId " + requestedSessionId );
                 return null;
             }
-
+            //session 备份信息
             final Object obj = _memcached.get( _sessionIdFormat.createBackupKey( requestedSessionId ) );
             if ( obj == null ) {
                 _log.info( "No backup found for sessionId " + requestedSessionId );
@@ -890,12 +900,9 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     }
 
     /**
-     * Determines the id of the (secondary) memcached node that's used for additional backup
-     * of non-sticky sessions.
-     * @param sessionId the id of the session
-     * @return the nodeId, e.g. "n2", or <code>null</code>.
-     * @see #isBackupNodeAvailable(String)
-     * @see NodeIdService#getNextNodeId(String)
+     * 根据sessionid 提取一个 nodeid 如果不存在，则从 nodeList里重新找一个
+     * @param sessionId
+     * @return
      */
     @CheckForNull
     String getBackupNodeId( @Nonnull final String sessionId ) {
