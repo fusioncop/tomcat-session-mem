@@ -327,7 +327,7 @@ public class TranscoderService {
             final int pos = maxBytes - i - 1; // the position of the byte in the number
             final int idx = beginIndex + pos; // the index in the data array
             data[idx] = (byte) ( ( num >> ( 8 * i ) ) & 0xff );
-            System.out.println(pos+"-->"+idx+"-->"+data+"-->"+(( num >> ( 8 * i ) ) & 0xff ));
+//            System.out.println(pos+"-->"+idx+"-->"+data+"-->"+(( num >> ( 8 * i ) ) & 0xff ));
         }
         return beginIndex + maxBytes;
     }

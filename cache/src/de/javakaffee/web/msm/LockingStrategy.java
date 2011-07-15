@@ -82,6 +82,7 @@ public abstract class LockingStrategy {
     protected final SessionIdFormat _sessionIdFormat;
     protected final InheritableThreadLocal<Request> _requestsThreadLocal;
     private final ExecutorService _executor;
+    //是否在其他节点做备份
     private final boolean _storeSecondaryBackup;
     protected final Statistics _stats;
 
@@ -261,14 +262,14 @@ public abstract class LockingStrategy {
         try {
 
             final long start = System.currentTimeMillis();
-            //查找
+            //查找SessionValidityInfo有效性验证信息
             final String validityKey = createValidityInfoKeyName( sessionId );
             final SessionValidityInfo validityInfo = loadSessionValidityInfoForValidityKey( validityKey );
             if ( validityInfo == null ) {
                 _log.warn( "Found no validity info for session id " + sessionId );
                 return;
             }
-
+            //更新有效性验证信息
             final int maxInactiveInterval = validityInfo.getMaxInactiveInterval();
             final byte[] validityData = encode( maxInactiveInterval, System.currentTimeMillis(), System.currentTimeMillis() );
             // fix for #88, along with the change in session.getMemcachedExpirationTimeToSet
@@ -350,6 +351,7 @@ public abstract class LockingStrategy {
     }
 
     /**
+     * 
      * Is used to determine if this thread / the current request already hit the application or if this method
      * invocation comes from the container.
      */

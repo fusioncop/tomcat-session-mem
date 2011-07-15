@@ -145,11 +145,10 @@ class SessionTrackerValve extends ValveBase {
     @Override
     public void invoke( final Request request, final Response response ) throws IOException, ServletException {
     	// （未开启功能 || 匹配规则）  则忽略掉，执行下个value 操作
-    	
         if ( !_enabled.get() || _ignorePattern != null && _ignorePattern.matcher( request.getRequestURI() ).matches() ) {
             getNext().invoke( request, response );
         } else {
-
+        	System.out.println("----->"+request.getRequestURI());
             if ( _log.isDebugEnabled() ) {
                 _log.debug( ">>>>>> Request starting: " + getURIWithQueryString( request ) + " ==================" );
             }
