@@ -1,7 +1,10 @@
 
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.net.InetSocketAddress;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -9,6 +12,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import net.spy.memcached.DefaultConnectionFactory;
+import net.spy.memcached.MemcachedClient;
 
 import de.javakaffee.web.msm.TranscoderService;
 
@@ -58,25 +64,78 @@ public class Test{
 		
 		
 	    //memcachedNodes 正则
-	     String NODE_REGEX = "([\\w]+):([^:]+):([\\d]+)";
-	    //memcachedNodes 正则 Pattern 对象
-	     Pattern NODE_PATTERN = Pattern.compile( NODE_REGEX );
-	    //多个 memcachedNodes 正则
-	     String NODES_REGEX = NODE_REGEX + "(?:(?:\\s+|,)" + NODE_REGEX + ")*";
-	  //多个 memcachedNodes 正则 Pattern 对象
-	     Pattern NODES_PATTERN = Pattern.compile( NODES_REGEX );
-		
-	     Matcher matcher = NODE_PATTERN.matcher("n2:192.168.0.83:11211 n1:192.168.0.84:11211");
-	     if(matcher.find()){
-	    	System.out.println(matcher.group(1)+"---->"+matcher.group(1));
-	    	System.out.println(matcher.group(2)+"---->"+matcher.group(2));
-	    	System.out.println(matcher.group(3)+"---->"+matcher.group(3));
-	     }
+//	     String NODE_REGEX = "([\\w]+):([^:]+):([\\d]+)";
+//	    //memcachedNodes 正则 Pattern 对象
+//	     Pattern NODE_PATTERN = Pattern.compile( NODE_REGEX );
+//	    //多个 memcachedNodes 正则
+//	     String NODES_REGEX = NODE_REGEX + "(?:(?:\\s+|,)" + NODE_REGEX + ")*";
+//	  //多个 memcachedNodes 正则 Pattern 对象
+//	     Pattern NODES_PATTERN = Pattern.compile( NODES_REGEX );
+//		
+//	     Matcher matcher = NODE_PATTERN.matcher("n2:192.168.0.83:11211 n1:192.168.0.84:11211");
+//	     if(matcher.find()){
+//	    	System.out.println(matcher.group(1)+"---->"+matcher.group(1));
+//	    	System.out.println(matcher.group(2)+"---->"+matcher.group(2));
+//	    	System.out.println(matcher.group(3)+"---->"+matcher.group(3));
+//	     }
 //		TimeUnit timeUnit = TimeUnit.SECONDS;
 //		System.out.println(timeUnit.toMillis( 500L ));
 		
 		
-		
+//		testMemcached();
+		testMemcached1();
+		testMemcached2();
+	}
+	
+	public static void testMemcached(){
+		try {
+			final MemcachedClient client = new MemcachedClient( new DefaultConnectionFactory(),
+			        Arrays.asList( new InetSocketAddress( "192.168.119.170", 11211 ) , new InetSocketAddress( "192.168.119.166", 11211 )) );
+			System.out.println(client.add("0DA5BC0367ED3B3D1573ACCCAFEC498E-n1", 10, "吃饭").get());
+			System.out.println(client.set("0DA5BC0367ED3B3D1573ACCCAFEC498E-n1", 10, "吃饭").get());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void testMemcached1(){
+		try {
+			final MemcachedClient client = new MemcachedClient( new DefaultConnectionFactory(),
+			        Arrays.asList( new InetSocketAddress( "192.168.119.170", 11211 )) );
+			System.out.println(client.get("validity:F9DC8CCA3F2019113CA40D47C07036E5-n1"));
+			System.out.println(client.get("lock:baF9DC8CCA3F2019113CA40D47C07036E5-n1"));
+			System.out.println(client.get("bak:F9DC8CCA3F2019113CA40D47C07036E5-n1"));
+			System.out.println(client.get("bak:validity:F9DC8CCA3F2019113CA40D47C07036E5-n1"));
+			System.out.println(client.get("F9DC8CCA3F2019113CA40D47C07036E5-n1"));
+			
+			System.out.println(client.get("validity:F9DC8CCA3F2019113CA40D47C07036E5-n2"));
+			System.out.println(client.get("lock:baF9DC8CCA3F2019113CA40D47C07036E5-n2"));
+			System.out.println(client.get("bak:F9DC8CCA3F2019113CA40D47C07036E5-n2"));
+			System.out.println(client.get("bak:validity:F9DC8CCA3F2019113CA40D47C07036E5-n2"));
+			System.out.println(client.get("F9DC8CCA3F2019113CA40D47C07036E5-n2"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void testMemcached2(){
+		try {
+			final MemcachedClient client = new MemcachedClient( new DefaultConnectionFactory(),
+			        Arrays.asList(new InetSocketAddress( "192.168.119.166", 11211 )) );
+			System.out.println(client.get("validity:F9DC8CCA3F2019113CA40D47C07036E5-n1"));
+			System.out.println(client.get("lock:baF9DC8CCA3F2019113CA40D47C07036E5-n1"));
+			System.out.println(client.get("bak:F9DC8CCA3F2019113CA40D47C07036E5-n1"));
+			System.out.println(client.get("bak:validity:F9DC8CCA3F2019113CA40D47C07036E5-n1"));
+			System.out.println(client.get("F9DC8CCA3F2019113CA40D47C07036E5-n1"));
+			
+			System.out.println(client.get("validity:F9DC8CCA3F2019113CA40D47C07036E5-n2"));
+			System.out.println(client.get("lock:baF9DC8CCA3F2019113CA40D47C07036E5-n2"));
+			System.out.println(client.get("bak:F9DC8CCA3F2019113CA40D47C07036E5-n2"));
+			System.out.println(client.get("bak:validity:F9DC8CCA3F2019113CA40D47C07036E5-n2"));
+			System.out.println(client.get("F9DC8CCA3F2019113CA40D47C07036E5-n2"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }
