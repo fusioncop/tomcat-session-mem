@@ -75,12 +75,13 @@ public final class MemcachedBackupSession extends StandardSession {
     private transient long _previousLastBackupTime;
 
     /*
+     * 最后一次memcached 备份操作
      * The expiration time that was sent to memcached with the last backup/touch.
      */
     private transient int _lastMemcachedExpirationTime;
 
     /*
-     * 是否是期满更新状态
+     * 是否进行超时更新操作
      * Stores, if the sessions expiration is just being updated in memcached
      */
     private volatile transient boolean _expirationUpdateRunning;

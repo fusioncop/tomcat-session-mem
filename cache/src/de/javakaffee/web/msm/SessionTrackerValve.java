@@ -220,7 +220,9 @@ class SessionTrackerValve extends ValveBase {
 
     /**
      * 
-     * 检查sessionID对应的tomcat或者memcached 是否有效  <br/>
+     * 检查sessionID对应的JvmRoute或者nodeid 是否有效  
+     * 该操作执行完毕之后，可认为是sessionid为最新，并且可用的sessionid
+     * <br/>
      * If there's a session for a requested session id that is taken over (tomcat failover) or
      * that will be relocated (memcached failover), the new session id will be set (via {@link Request#changeSessionId(String)}).
      *
@@ -236,8 +238,8 @@ class SessionTrackerValve extends ValveBase {
          * Check for session relocation only if a session id was requested
          */
         if ( request.getRequestedSessionId() != null ) {
-
         	String newSessionId = _sessionBackupService.changeSessionIdOnTomcatFailover( request.getRequestedSessionId() );
+        	//如果返回null 则说明 Tomcat 中未使用JvmRoute名称，或者本地与sessionid包含的 JvmRoute名称 不相同
         	if ( newSessionId == null ) {
                 newSessionId = _sessionBackupService.changeSessionIdOnMemcachedFailover( request.getRequestedSessionId() );
             }
@@ -252,11 +254,15 @@ class SessionTrackerValve extends ValveBase {
         return false;
     }
 
+    /**
+     * 
+     * @param request
+     * @param response
+     * @param sessionIdChanged
+     */
     private void backupSession( final Request request, final Response response, final boolean sessionIdChanged ) {
 
-        /*
-         * Do we have a session?
-         */
+        //cookie 取 sessionid
         String sessionId = getSessionIdFromResponseSessionCookie( response );
         if ( sessionId == null ) {
             sessionId = request.getRequestedSessionId();

@@ -94,6 +94,7 @@ public class NodeIdService {
     }
 
     /**
+     * 精确的设置指定nodeid的状态信息 <br/>
      * Mark the given nodeId as available as specified.
      * @param nodeId the nodeId to update
      * @param available specifies if the node was abailable or not

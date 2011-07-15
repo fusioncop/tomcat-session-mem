@@ -66,6 +66,8 @@ public class NodeAvailabilityCache<K> {
     }
 
     /**
+     * 
+     * 缓存指定nodeid 的状态，可用OR 不可用
      * If the specified key is not already associated with a value or if it's
      * associated with a different value, associate it with the given value.
      * This is equivalent to
