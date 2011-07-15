@@ -358,7 +358,7 @@ public abstract class LockingStrategy {
     }
 
     /**
-     * 加载有效备份sessionid 信息
+     * 加载有效验证信息 key： "validity:" + sessionId <br/> 信息
      * @param sessionId
      * @return
      */
@@ -368,7 +368,7 @@ public abstract class LockingStrategy {
     }
 
     /**
-     * 从 memcached 查找  备份的session 有效性（"bak:" + "validity:" + sessionid） 对象
+     * 从 memcached 查找  备份的session 有效性（"validity:" + sessionid） 对象
      * @param validityInfoKey
      * @return
      */
@@ -391,7 +391,8 @@ public abstract class LockingStrategy {
     }
 
     /**
-     * 锁定操作
+     * 执行锁定操作，即将 该key（"lock:" + sessionId）存放于memcached中
+     * 即标识位将该session已锁定
      * Invoked before the session for this sessionId is loaded from memcached.
      */
     @CheckForNull
@@ -399,7 +400,8 @@ public abstract class LockingStrategy {
             ExecutionException;
 
     /**
-     * 如果session 还有效........
+     * 从memcached中加载有效验证信息 key： "validity:" + sessionId <br/> 信息
+     * 并将LastAccessedTime, ThisAccessedTime 赋予session对象
      * Invoked after a non-sticky session is loaded from memcached, can be used to update some session fields based on
      * separately stored information (e.g. session validity info).
      *
