@@ -239,8 +239,7 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     //启动时，初始化加入容器中
     private SessionTrackerValve _sessionTrackerValve;
 
-
-    static enum LockStatus {
+	static enum LockStatus {
         /**
          * For sticky sessions or readonly requests with non-sticky sessions there's no lock required.
          */
@@ -954,6 +953,8 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     }
 
     /**
+     * 
+     * 此方法 供 SessionTrackerValve 中调用，用来对
      * Store the provided session in memcached if the session was modified
      * or if the session needs to be relocated.
      *
@@ -974,6 +975,7 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
         //容器 中取 msmSession 
         final MemcachedBackupSession msmSession = (MemcachedBackupSession) sessions.get( sessionId );
         if ( msmSession == null ) {
+        	System.out.println("------------------->backupSession-->msmSession == null");
             _log.debug( "No session found in session map for " + sessionId );
             if ( !_sticky ) {
                 _lockingStrategy.onBackupWithoutLoadedSession( sessionId, requestId, _backupSessionService );
