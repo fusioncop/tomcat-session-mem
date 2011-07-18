@@ -29,7 +29,7 @@ import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 
 /**
- * Node 存放节点	NodeAvailabilityCache
+ * 缓存节点状态信息
  * An LRUCache that supports a maximum number of cache entries and a time to
  * live for them. The TTL is measured from insertion time to access time.
  *
@@ -41,9 +41,11 @@ import org.apache.juli.logging.LogFactory;
 public class NodeAvailabilityCache<K> {
 
     private static final Log LOG = LogFactory.getLog( NodeAvailabilityCache.class );
-    
+    //有效时长
     private final long _ttl;
+    //缓存的节点状态
     private final ConcurrentHashMap<K, ManagedItem<Boolean>> _map;
+    //节点是否有效
     private final CacheLoader<K> _cacheLoader;
 
     /**
@@ -67,7 +69,7 @@ public class NodeAvailabilityCache<K> {
 
     /**
      * 
-     * 缓存指定nodeid 的状态，可用OR 不可用
+     * 设定 nodeid 的状态，true 可用OR  false 不可用
      * If the specified key is not already associated with a value or if it's
      * associated with a different value, associate it with the given value.
      * This is equivalent to
@@ -104,6 +106,7 @@ public class NodeAvailabilityCache<K> {
     }
 
     /**
+     * 判断该节点 是否有效
      * Determines, if the node is available. If it's not cached, it's loaded
      * from the cache loader.
      *
@@ -123,10 +126,21 @@ public class NodeAvailabilityCache<K> {
         }
     }
 
+    /**
+     * 检查检点是否有效 返回true 即为 失效， 反之 有效
+     * 当前时间 - 节点的缓存时间，必须小于超时时间，才有效。
+     * @param item
+     * @return
+     */
     private boolean isExpired( final ManagedItem<Boolean> item ) {
         return _ttl > -1 && System.currentTimeMillis() - item._insertionTime > _ttl;
     }
 
+    /**
+     * 重新检查该节点是否有效
+     * @param key
+     * @return
+     */
     private boolean updateIsNodeAvailable( final K key ) {
         final Boolean result = Boolean.valueOf( _cacheLoader.isNodeAvailable( key ) );
 
@@ -139,8 +153,8 @@ public class NodeAvailabilityCache<K> {
     }
 
     /**
+     * 获得所有节点名称
      * All known keys.
-     *
      * @return a list of all keys, never <code>null</code>.
      */
     public List<K> getKeys() {
@@ -148,8 +162,8 @@ public class NodeAvailabilityCache<K> {
     }
 
     /**
+     * 获得所有失效的节点
      * A set of nodes that are stored as unavailable.
-     *
      * @return a set of unavailable nodes, never <code>null</code>.
      */
     public Set<K> getUnavailableNodes() {
@@ -163,15 +177,23 @@ public class NodeAvailabilityCache<K> {
     }
 
     /**
+     * 缓存节点状态信息
      * Stores a value with the timestamp this value was added to the cache.
      *
      * @param <T>
      *            the type of the value
      */
     private static final class ManagedItem<T> {
+    	//true 有效 or false 失效
         private final T _value;
+        //插入时间，用来判断超时检查
         private final long _insertionTime;
 
+        /**
+         * 缓存节点状态信息
+         * @param value
+         * @param accessTime
+         */
         private ManagedItem( final T value, final long accessTime ) {
             _value = value;
             _insertionTime = accessTime;
@@ -179,13 +201,18 @@ public class NodeAvailabilityCache<K> {
     }
 
     /**
+     * memcached 节点是否有效
      * The cache loader interface.
      *
      * @param <K>
      *            the type of the key.
      */
     static interface CacheLoader<K> {
-
+    	
+    	/**
+    	 * memcached 节点状态信息
+    	 * @return
+    	 */
         boolean isNodeAvailable( K key );
 
     }

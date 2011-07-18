@@ -30,6 +30,7 @@ import org.apache.juli.logging.LogFactory;
 
 
 /**
+ * 节点状态信息业务类
  * Provides services related to node ids.
  *
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
@@ -55,8 +56,11 @@ public class NodeIdService {
      * Updated: the node status cache holds the status of each node for the
      * configured TTL.
      */
+    //节点状态信息
     private final NodeAvailabilityCache<String> _nodeAvailabilityCache;
+    //有效节点
     private final NodeIdList _nodeIds;
+    //失效节点
     private final List<String> _failoverNodeIds;
 
     /**
@@ -104,6 +108,7 @@ public class NodeIdService {
     }
 
     /**
+     * 先从有效的节点集合中获取一个有效的节点，如果没有，则从失效的节点中查找是否有有效的节点，并返回。
      * Get an available (randomly selected) memcached node id for session backup.
      * The active node ids are preferred, if no active node id is left to try,
      * a failover node id is picked.
@@ -133,6 +138,7 @@ public class NodeIdService {
     }
 
     /**
+     * 有效的节点中获得下一个节点
      * Gets the next node id for the given one from the list of all node ids.
      * If there's only a single node known, conceptionally there's no next node
      * and therefore <code>null</code> is returned.
@@ -149,6 +155,7 @@ public class NodeIdService {
     }
 
     /**
+     * 随机获得下一个有效的节点
      * Determines (randomly) an available node id from the provided node ids. The
      * returned node id will be different from the provided nodeId and will
      * be available according to the local {@link NodeAvailabilityCache}.
@@ -178,6 +185,7 @@ public class NodeIdService {
     }
 
     /**
+     * 取得一个有效的节点
      * Get the next random, available node id. If no node is available, <code>null</code>
      * is returned.
      * @return a nodeId or <code>null</code>.
