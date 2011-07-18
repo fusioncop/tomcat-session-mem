@@ -861,7 +861,7 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
      */
     @CheckForNull
     private MemcachedBackupSession loadBackupSession( @Nonnull final String requestedSessionId ) {
-
+    	发大方大方的
         final String backupNodeId = getBackupNodeId( requestedSessionId );
         //验证nodeid 不为空
         if ( backupNodeId == null ) {
@@ -1046,6 +1046,7 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
      * Assumes that before you checked {@link #canHitMemcached(String)}.
      */
     private MemcachedBackupSession loadFromMemcached( final String sessionId ) {
+    	dfdd
         final String nodeId = _sessionIdFormat.extractMemcachedId( sessionId );
         if ( nodeId == null ) {
             throw new IllegalArgumentException( "The sessionId should contain a nodeId, this should be checked" +
