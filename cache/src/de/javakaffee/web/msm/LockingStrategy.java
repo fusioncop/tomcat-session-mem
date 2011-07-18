@@ -393,7 +393,7 @@ public abstract class LockingStrategy {
     }
 
     /**
-     * 执行锁定操作，即将 该key（"lock:" + sessionId）存放于memcached中
+     * 仅作锁定操作！！！执行锁定操作，即将 该key（"lock:" + sessionId）存放于memcached中
      * 即标识位将该session已锁定
      * Invoked before the session for this sessionId is loaded from memcached.
      */
