@@ -219,7 +219,7 @@ class SessionTrackerValve extends ValveBase {
 
     /**
      * 
-     * 检查sessionID对应的JvmRoute或者nodeid 是否有效  
+     * 检查sessionID对应的JvmRoute和nodeid 是否有效  返回true 说明sessionid有变化；
      * 该操作执行完毕之后，可认为是sessionid为最新，并且可用的sessionid
      * <br/>
      * If there's a session for a requested session id that is taken over (tomcat failover) or
@@ -254,7 +254,7 @@ class SessionTrackerValve extends ValveBase {
     }
 
     /**
-     * 
+     * 若果cookie有sessionid 则取之， 没有的话从，session取。
      * @param request
      * @param response
      * @param sessionIdChanged

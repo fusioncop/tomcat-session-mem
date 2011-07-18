@@ -711,9 +711,8 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     }
 
     /**
-     * 检查 session 包含的JvmRoute 与本地容器的 JvmRoute 是否相同
-     * 如果不相同 容器中查找session对象， 如果还为空， memcached 中查找该对象
-     * 如果相同，则返回null
+     * 检查 sessionid中包含的JvmRoute 和 本地的 JvmRoute，如果相同为同一个容器，不做任何动作；
+     * 不相同的则说明该请求为别的容器的session请求，则需改变本地的session的sessionid并重新激活本地session
      */
     @Override
     public String changeSessionIdOnTomcatFailover( final String requestedSessionId ) {
@@ -747,7 +746,7 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     }
 
     /**
-     * 因sessionid 中 JvmRouteID的改天，所以改变本地容器session中sessionid的值，
+     * 因sessionid 中 JvmRouteID的改变，所以改变本地容器session中sessionid的值，
      * 去掉旧session，（本地，memcached）加入新session，并激活。
      * @param session
      * @return
@@ -808,6 +807,7 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
 
         try {
         	//本地容器加载session
+        	//nodeID 有效性验证 session中的nodeID 不可用，就换个可用的
             if ( _sticky ) {
                 /* We can just lookup the session in the local session map, as we wouldn't get
                  * the session from memcached if the node was not available - or, the other way round,
@@ -829,7 +829,7 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
             }
             //memcached 加载session
             else {
-
+            	//memcached 中加载 ，并且激活session
                 /* for non-sticky sessions we check the validity info
                  */
                 final String nodeId = _sessionIdFormat.extractMemcachedId( requestedSessionId );
@@ -854,7 +854,8 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     }
 
     /**
-     * 加载session信息
+     * memcached 中加载session信息
+     * 首先验证 NodeId可用性，其次验证的session的有效性信息，然后反序列化session对象
      * @param requestedSessionId
      * @return
      */
@@ -868,7 +869,7 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
             return null;
         }
         
-        //验证可用
+        //节点不可用执行
         if ( !_nodeIdService.isNodeAvailable( backupNodeId ) ) {
             _log.info( "Node "+ backupNodeId +" that stores the backup of the session "+ requestedSessionId +" is not available." );
             return null;
@@ -929,6 +930,7 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     }
 
     /**
+     * 如果该nodeid无效，则获得一个有效的nodeid
      * Returns a new node id if the given one is <code>null</code> or not available.
      * @param nodeId the node id that is checked for availability (if not <code>null</code>).
      * @return a new node id if the given one is <code>null</code> or not available, otherwise <code>null</code>.
@@ -1049,10 +1051,13 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
             throw new IllegalArgumentException( "The sessionId should contain a nodeId, this should be checked" +
             		" by invoking canHitMemcached before invoking this method (bug, needs fix)." );
         }
+        // nodeid 失效
         if ( !_nodeIdService.isNodeAvailable( nodeId ) ) {
             _log.debug( "Asked for session " + sessionId + ", but the related"
                     + " memcached node is still marked as unavailable (won't load from memcached)." );
+        // nodeid 有效
         } else {
+        	
             if ( _log.isDebugEnabled() ) {
                 _log.debug( "Loading session from memcached: " + sessionId );
             }
