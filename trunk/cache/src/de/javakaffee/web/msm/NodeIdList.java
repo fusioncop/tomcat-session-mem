@@ -46,6 +46,7 @@ public class NodeIdList extends ArrayList<String> {
     }
 
     /**
+     * 查找指定节点的索引位置，取其下一位置节点
      * Get the next node id for the given one. For the last node id
      * the first one is returned.
      * If this list contains only a single node, conceptionally there's no next node
