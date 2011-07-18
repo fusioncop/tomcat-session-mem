@@ -97,7 +97,8 @@ public class BackupSessionTask implements Callable<BackupResult> {
     }
 
     /**
-     * 新增memcache session任务
+     * 将当前session 更新至memcache，并更新sesson对象的访问时间等属性，
+     * 不对session的有效性等做任何测试，直接塞入。
      */
     public BackupResult call() throws Exception {
         if ( _log.isDebugEnabled() ) {
