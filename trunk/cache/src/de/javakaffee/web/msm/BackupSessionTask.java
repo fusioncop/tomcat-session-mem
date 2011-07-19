@@ -40,7 +40,9 @@ import de.javakaffee.web.msm.BackupSessionTask.BackupResult;
 import de.javakaffee.web.msm.SessionTrackerValve.SessionBackupService.BackupResultStatus;
 
 /**
- * 执行存储session至memcache操作的任务类。
+ * 当session的attributes发生变化，或者 _force 为true 或者权限信息发生变化时，
+     * 才做memcached中session的更新操作
+ * 执行存储session至memcache操作的任务类。其中session存储的key为：sessionID。
  * 该类实现 Callable 接口 
  * 返回值 为 BackupResult <br />
  * Stores the provided session in memcached if the session was modified
@@ -63,8 +65,12 @@ public class BackupSessionTask implements Callable<BackupResult> {
     private final MemcachedClient _memcached;
     private final NodeIdService _nodeIdService;
     private final Statistics _statistics;
-
+    
     /**
+     * 当session的attributes发生变化，或者 _force 为true 或者权限信息发生变化时，
+     * 才做memcached中session的更新操作
+     * 将当前session 更新至memcache，并更新sesson对象的访问时间等属性，
+     * 不对session的有效性等做任何测试，直接塞入。
      * @param session
      *            the session to save
      * @param sessionBackupAsync
@@ -97,6 +103,8 @@ public class BackupSessionTask implements Callable<BackupResult> {
     }
 
     /**
+     * 当session的attributes发生变化，或者 _force 为true 或者权限信息发生变化时，
+     * 才做memcached中session的更新操作
      * 将当前session 更新至memcache，并更新sesson对象的访问时间等属性，
      * 不对session的有效性等做任何测试，直接塞入。
      */
@@ -115,6 +123,8 @@ public class BackupSessionTask implements Callable<BackupResult> {
             final byte[] attributesData = serializeAttributes( _session, attributes );
             final int hashCode = Arrays.hashCode( attributesData );
             final BackupResult result;
+            //当session的attributes发生变化，或者 _force 为true 或者权限信息发生变化时，
+            //才做memcached中session的更新操作
             if ( _session.getDataHashCode() != hashCode
                     || _force
                     || _session.authenticationChanged() ) {
@@ -179,6 +189,12 @@ public class BackupSessionTask implements Callable<BackupResult> {
         }
     }
 
+    /**
+     * 序列session的 Attributes 属性
+     * @param session
+     * @param attributes
+     * @return
+     */
     private byte[] serializeAttributes( final MemcachedBackupSession session, final Map<String, Object> attributes ) {
         final long start = System.currentTimeMillis();
         final byte[] attributesData = _transcoderService.serializeAttributes( session, attributes );
@@ -220,7 +236,8 @@ public class BackupSessionTask implements Callable<BackupResult> {
     }
 
     /**
-     * session data 存入memcache 中， 并 更新 MemcachedBackupSession 对象的属性
+     * session data 存入memcache里 ，其中key为：sessionID,
+     * 并 更新 MemcachedBackupSession 对象的属性
      * @throws NodeFailureException
      */
     private void storeSessionInMemcached( final MemcachedBackupSession session, final byte[] data) throws NodeFailureException {

@@ -145,7 +145,14 @@ public class BackupSessionService {
     }
 
     /**
-     * 新增 memcache session 至memcache 中
+	 * 检查session对象的合法性，符合条件才备份 session。
+	 * 	验证sessionid中nodeid
+	 *  验证上次备份的时候和当前访问的时间是否相同
+	 *  验证session.attributes 未被访问
+	 *  验证sessionid 是否有变，session是否过期，
+	 *  验证权限信息是否变化
+	 *  验证是否为新session 只有创建sessionid时才为true
+	 * 以上条件否符合的时候才执行备份操作。
      * Store the provided session in memcached if the session was modified
      * or if the session needs to be relocated.
      * <p>
@@ -161,14 +168,11 @@ public class BackupSessionService {
      * <li>check if session attributes were accessed during this request</li>
      * </ul>
      * </p>
-     *
-     * @param session
-     *            the session to save
-     * @param force
+     * @param session the session to save
+     * @param force 一般为true
      *            specifies, if session backup shall be forced, e.g. because the
      *            session id was changed due to a memcached failover or tomcat failover.
      * @return a {@link Future} providing the result of the backup task.
-     *
      * @see MemcachedBackupSessionManager#setSessionBackupAsync(boolean)
      * @see BackupSessionTask#call()
      */
@@ -179,7 +183,7 @@ public class BackupSessionService {
 
         final long start = System.currentTimeMillis();
         try {
-
+        	//sessionid 无效
             if ( !hasMemcachedIdSet( session ) ) {
                 if ( _log.isDebugEnabled() ) {
                     _log.debug( "Skipping backup for session id " + session.getId() + " as no memcached id could be detected in the session id." );
@@ -192,6 +196,7 @@ public class BackupSessionService {
              * If this is not the case, we even don't have to check if attributes
              * have changed (and can skip serialization and hash calucation)
              */
+            //如果上次备份成功，或者，备份被忽略的情况下，session.wasAccessedSinceLastBackupCheck() 将返回true
             if ( !session.wasAccessedSinceLastBackupCheck()
                     && !force ) {
                 _log.debug( "Session was not accessed since last backup/check, therefore we can skip this" );
@@ -199,7 +204,10 @@ public class BackupSessionService {
                 releaseLock( session );
                 return new SimpleFuture<BackupResult>( BackupResult.SKIPPED );
             }
-
+            //session.attributes 未被访问
+            //&& sessionid 是否有变，session是否过期，
+            // 权限信息是否变化
+            // 是否为新session 只有创建sessionid时才为true
             if ( !session.attributesAccessedSinceLastBackup()
                     && !force
                     && !session.authenticationChanged()

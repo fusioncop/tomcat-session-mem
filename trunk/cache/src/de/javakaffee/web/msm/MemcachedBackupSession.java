@@ -47,35 +47,39 @@ public final class MemcachedBackupSession extends StandardSession {
     private static final long serialVersionUID = 1L;
 
     /*
-     * session的序列化代码hashcode用来确定session被修改<br/>
+     * 注： 重要！
+     * 将session 的attributes 序列化为byte[]数组后的hashcode码。
+     * session是否有变化的唯一标识。
+     * 若果有变化则更新memcached中的session，如果没有变化，就不做任何操作。
      * The hash code of the serialized byte[] of this session that is
      * used to determine, if the session was modified.
      */
     private transient int _dataHashCode;
 
     /*
-     * 用来确定session最后一次被访问时间
+     * 记录的最后一次访问时间 	参见set方法
+     * 该set方法是在备份session的时候被调用，备份跳过或者成功的情况下会被调用
      * Used to determine, if the session was #accessed since it was
      * last backup'ed (or checked if it needs to be backup'ed)
      */
     private transient long _thisAccessedTimeFromLastBackupCheck;
 
     /*
-     * 最后一次备份时间
+     * 最后一次备份时间（备份至memcached）
      * Stores the time in millis when this session was stored in memcached, is set
      * before session data is serialized.
      */
     private long _lastBackupTime;
 
     /*
-     * 最后一次的前一次备份时间（倒数第二次备份时间）
+     * 倒数第二次备份时间（备份至memcached）
      * The former value of _lastBackupTimestamp which is restored if the session could not be saved
      * in memcached.
      */
     private transient long _previousLastBackupTime;
 
     /*
-     * 最后一次memcached 备份操作
+     * memcached中存放session的超时时间
      * The expiration time that was sent to memcached with the last backup/touch.
      */
     private transient int _lastMemcachedExpirationTime;
@@ -87,16 +91,20 @@ public final class MemcachedBackupSession extends StandardSession {
     private volatile transient boolean _expirationUpdateRunning;
 
     /*
-     * 是否为存储状态
+     * 是否为备份装状态，备份状态为 sessin序列化数据转存如memcached状态
      * Stores, if the sessions is just being backuped
      */
     private volatile transient boolean _backupRunning;
 
+    //权限信息是否发生变化，也标志着 session 对象是否改变
     private transient boolean _authenticationChanged;
 
+    //session 的attribute 只要被访问，包括get set 方法就返回true
     private transient boolean _attributesAccessed;
-
+    
+    // sessionid 是否更新
     private transient boolean _sessionIdChanged;
+    // 为false 时，将最大超时时间设置为，给定值的俩倍
     private transient boolean _sticky;
     private volatile transient LockStatus _lockStatus;
 

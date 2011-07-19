@@ -82,7 +82,7 @@ public abstract class LockingStrategy {
     protected final SessionIdFormat _sessionIdFormat;
     protected final InheritableThreadLocal<Request> _requestsThreadLocal;
     private final ExecutorService _executor;
-    //是否在其他节点做备份
+    //是否做备份信息
     private final boolean _storeSecondaryBackup;
     protected final Statistics _stats;
 
@@ -248,8 +248,9 @@ public abstract class LockingStrategy {
     }
 
     /**
-     * 容器中没有session的情况下，只检查 有效性session 和  备份的有效性sesson
-     *  
+     *  仅对 有效性验证信息操作的方法
+     *  首先 更新有效性验证信息 "validity:" + sessionId;
+     *  其次 更新备份的有效性验证信息"bak:" + "validity:" + sessionId; <br/>
      * Is invoked for the backup of a non-sticky session that was not accessed for the current request.
      */
     protected void onBackupWithoutLoadedSession( @Nonnull final String sessionId, @Nonnull final String requestId,
@@ -381,7 +382,7 @@ public abstract class LockingStrategy {
     }
 
     /**
-     * 根据sessionid查找 备份的session 有效性  对象
+     * 根据sessionid查找 ("bak:" + "validity:" + sessionid)备份的有效性session 对象
      * @param sessionId
      * @return
      */
@@ -674,9 +675,10 @@ public abstract class LockingStrategy {
     }
 
     /**
-     * memcached 是否包含session对象
-     * 是否包含备份的session
-     * 更新备份后的有效性session
+     * 仅作以下操作：
+     * 测试 memcached中是否包含_sessionId;
+     * 测试 memcached中是否包含"bak:" + sessionId;
+     * 更新 memcached中包含的 有效性验证备份信息"bak:" + "validity:" + sessionId;
      */
     private final class OnBackupWithoutLoadedSessionTask implements Callable<Void> {
 
@@ -686,6 +688,12 @@ public abstract class LockingStrategy {
         private final byte[] _validityData;
         private final int _maxInactiveInterval;
 
+        /**
+         * 仅作以下操作：
+         * 测试 memcached中是否包含_sessionId;
+         * 测试 memcached中是否包含"bak:" + sessionId;
+         * 更新 memcached中包含的 有效性验证备份信息"bak:" + "validity:" + sessionId;
+         */
         private OnBackupWithoutLoadedSessionTask( @Nonnull final String sessionId,
                 final boolean storeSecondaryBackup,
                 @Nonnull final String validityKey,
@@ -708,6 +716,7 @@ public abstract class LockingStrategy {
              * For non-sticky sessions we store/ping a backup of the session in a secondary memcached node (under a special key
              * that's resolved by the SuffixBasedNodeLocator), but only when we have more than 1 memcached node configured...
              */
+            //是否做备份信息标识
             if ( _storeSecondaryBackup ) {
                 try {
                 	//是否包含备份的session
