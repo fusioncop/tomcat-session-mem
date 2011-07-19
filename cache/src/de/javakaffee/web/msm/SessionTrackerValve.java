@@ -219,7 +219,8 @@ class SessionTrackerValve extends ValveBase {
 
     /**
      * 
-     * 检查sessionID对应的JvmRoute和nodeid 是否有效  返回true 说明sessionid有变化；
+     * 检查sessionID对应的JvmRoute和nodeid 是否有效 ;
+     * 返回true 说明sessionid有变化；
      * 该操作执行完毕之后，可认为是sessionid为最新，并且可用的sessionid
      * <br/>
      * If there's a session for a requested session id that is taken over (tomcat failover) or
@@ -237,9 +238,12 @@ class SessionTrackerValve extends ValveBase {
          * Check for session relocation only if a session id was requested
          */
         if ( request.getRequestedSessionId() != null ) {
+        	//疑问  _sticky 作用？ 是否需要该处从memcached加载session
+        	//loadFromMemcached( final String sessionId )
         	String newSessionId = _sessionBackupService.changeSessionIdOnTomcatFailover( request.getRequestedSessionId() );
         	//如果返回null 则说明 Tomcat 中未使用JvmRoute名称，或者本地与sessionid包含的 JvmRoute名称 不相同
         	if ( newSessionId == null ) {
+        		//loadBackupSession( requestedSessionId )
                 newSessionId = _sessionBackupService.changeSessionIdOnMemcachedFailover( request.getRequestedSessionId() );
             }
 
@@ -310,9 +314,15 @@ class SessionTrackerValve extends ValveBase {
      * The service that stores session backups in memcached.
      */
     public static interface SessionBackupService {
-
+    	
         /**
-         * 检查sessionid中是否属于本地的jvmRoute,如果不是，则改变sessionid
+         * <b>注：当 _sticky 为false，或者 未配置<Engine jvmRoute="tomcat1">该属性的时候，则 直接返回null; </b><br />
+         * 如果 _sticky 为 false 直接返回null
+         * 如果 _sticky 为 true
+         * 	检查 sessionid中包含的JvmRoute 和 本地的 JvmRoute，如果相同为同一个容器，直接返回null
+         * 	如果不是同一个容器则说明该请求为别的容器的session请求，
+         * 	加载本地容器session，如果为空，则加载 memcached 中的session 重新将该session对象
+         * 	加入本地容器中
          * Check if the given session id does not belong to this tomcat (according to the
          * local jvmRoute and the jvmRoute in the session id). If the session contains a
          * different jvmRoute load if from memcached. If the session was found in memcached and
@@ -322,34 +332,43 @@ class SessionTrackerValve extends ValveBase {
          * This is only useful for sticky sessions, in non-sticky operation mode <code>null</code> should
          * always be returned.
          * </p>
-         *
-         * @param requestedSessionId
-         *            the sessionId that was requested.
-         *
-         * @return the new session id if the session is taken over and the id was changed.
-         *          Otherwise <code>null</code>.
-         *
+         * @param requestedSessionId the sessionId that was requested.
+         * @return the new session id if the session is taken over and the id was changed. Otherwise <code>null</code>.
          * @see Request#getRequestedSessionId()
          */
         String changeSessionIdOnTomcatFailover( final String requestedSessionId );
 
+        
+        
         /**
+         * 如果 _sticky 为true 则从本地容器查找session，验证session的有效性isValid()，
+         * 		验证session的nodeid是否可用（如不可用将查找可用的新nodeid），封装新的sessionid，并返回封装后的sessionid串
+         * 如果 _sticky 为false则从memcached加载session的备份信息，需验证 备份的有效性	session验证信息是否有效，
+         * 		验证都通过的情况下，将新加载的备份session重新加入本地容器中。并返回封装后的sessionid串
          * Check if the valid session associated with the provided
          * requested session Id will be relocated with the next {@link #backupSession(Session, boolean)}
          * and change the session id to the new one (containing the new memcached node). The
          * new session id must be returned if the session will be relocated and the id was changed.
-         *
-         * @param requestedSessionId
-         *            the sessionId that was requested.
-         *
-         * @return the new session id if the session will be relocated and the id was changed.
-         *          Otherwise <code>null</code>.
-         *
+         * @param requestedSessionId the sessionId that was requested.
+         * @return the new session id if the session will be relocated and the id was changed. Otherwise <code>null</code>.
          * @see Request#getRequestedSessionId()
          */
         String changeSessionIdOnMemcachedFailover( final String requestedSessionId );
 
         /**
+         * 此方法 供 SessionTrackerValve 中调用
+	     * 检查 _enabled 是否开启，开启继续执行
+	     * 检查容器中是否包含session	包含继续执行
+	     * 检查session是否有效     有效继续执行
+	     * 传递的 sessionid 有变 或者 _sticky 为false 并且未超时  继续执行
+	     * 	验证sessionid中nodeid
+		 *  验证上次备份的时候和当前访问的时间是否相同
+		 *  验证session.attributes 未被访问
+		 *  验证sessionid 是否有变，session是否过期，
+		 *  验证权限信息是否变化
+		 *  验证是否为新session 只有创建sessionid时才为true
+		 *  当session的attributes发生变化，或者 _force 为true 或者权限信息发生变化时，
+		 *  都满足时才执行session更新操作
          * Backup the session for the provided session id in memcached if the session was modified or
          * if the session needs to be relocated. In non-sticky session-mode the session should not be
          * loaded from memcached for just storing it again but only metadata should be updated.

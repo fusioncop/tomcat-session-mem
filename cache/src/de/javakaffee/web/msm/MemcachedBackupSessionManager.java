@@ -231,7 +231,13 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     private SerializingTranscoder _upgradeSupportTranscoder;
     //备份memcache
     private BackupSessionService _backupSessionService;
-    //是否启用该组件功能
+    
+    
+   /**
+    * 如果设置为false 会话超时检查将不执行
+    * 如果设置为false request跟踪（SessionTrackerValve）将不检查tomcat session
+    * 
+    */
     private boolean _sticky = true;
     private String _lockingMode;
     private LockingStrategy _lockingStrategy;
@@ -711,9 +717,23 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     }
 
     /**
-     * 检查 sessionid中包含的JvmRoute 和 本地的 JvmRoute，如果相同为同一个容器，不做任何动作；
-     * 不相同的则说明该请求为别的容器的session请求，则需改变本地的session的sessionid并重新激活本地session
+     * 
+     * 
+     * 
+     * 
+     * 
+     * 
      */
+    
+   /**
+     * <b>注：当 _sticky 为false，或者 未配置<Engine jvmRoute="tomcat1">该属性的时候，则 直接返回null; </b><br />
+    * 如果 _sticky 为 false 直接返回null
+    * 如果 _sticky 为 true
+    * 	检查 sessionid中包含的JvmRoute 和 本地的 JvmRoute，如果相同为同一个容器，直接返回null
+    * 	如果不是同一个容器则说明该请求为别的容器的session请求，
+    * 	加载本地容器session，如果为空，则加载 memcached 中的session 重新将该session对象
+    * 	加入本地容器中
+    */
     @Override
     public String changeSessionIdOnTomcatFailover( final String requestedSessionId ) {
     	// 含义
@@ -733,7 +753,7 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
         	//本地 sessions 取session
             MemcachedBackupSession session = (MemcachedBackupSession) sessions.get( requestedSessionId );
             if ( session == null ) {
-            	//本地 cache 取session
+            	//memcached 中取session
                 session = loadFromMemcachedWithCheck( requestedSessionId );
             }
 
@@ -800,7 +820,10 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     }
 
     /**
-     * 检查nodeid是否有效，并返回新的sessionid
+     * 如果 _sticky 为true 则从本地容器查找session，验证session的有效性isValid()，
+     * 		验证session的nodeid是否可用（如不可用将查找可用的新nodeid），封装新的sessionid，并返回封装后的sessionid串
+     * 如果 _sticky 为false则从memcached加载session的备份信息，需验证 备份的有效性	session验证信息是否有效，
+     * 		验证都通过的情况下，将新加载的备份session重新加入本地容器中。并返回封装后的sessionid串
      */
     @Override
     public String changeSessionIdOnMemcachedFailover( final String requestedSessionId ) {
@@ -854,14 +877,18 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     }
 
     /**
-     * memcached 中加载session信息
-     * 首先验证 NodeId可用性，其次验证的session的有效性信息，然后反序列化session对象
+     * 如果一下出现无效的情况，直接返回null,
+     * 首先验证 NodeId可用性，
+     * 其次验证的备份的有效性验证信息("bak:" + "validity:" + sessionid)是否有效
+     * 然后反序列化备份的session对象（"bak:" + sessionId）
+     * 更新反序列化备份的session对象时间戳属性
+     * 并且返回 session对象
      * @param requestedSessionId
      * @return
      */
+ // FIXME
     @CheckForNull
     private MemcachedBackupSession loadBackupSession( @Nonnull final String requestedSessionId ) {
-    	发大方大方的
         final String backupNodeId = getBackupNodeId( requestedSessionId );
         //验证nodeid 不为空
         if ( backupNodeId == null ) {
@@ -882,7 +909,7 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
                 _log.info( "No validity info (or no valid one) found for sessionId " + requestedSessionId );
                 return null;
             }
-            //session 备份信息
+            //查找 session 备份信息 （"bak:" + sessionid）
             final Object obj = _memcached.get( _sessionIdFormat.createBackupKey( requestedSessionId ) );
             if ( obj == null ) {
                 _log.info( "No backup found for sessionId " + requestedSessionId );
@@ -955,8 +982,19 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     }
 
     /**
-     * 
-     * 此方法 供 SessionTrackerValve 中调用，用来对
+     * 此方法 供 SessionTrackerValve 中调用
+     * 检查 _enabled 是否开启，开启继续执行
+     * 检查容器中是否包含session	包含继续执行
+     * 检查session是否有效     有效继续执行
+     * 传递的 sessionid 有变 或者 _sticky 为false 并且未超时  继续执行
+     * 	验证sessionid中nodeid
+	 *  验证上次备份的时候和当前访问的时间是否相同
+	 *  验证session.attributes 未被访问
+	 *  验证sessionid 是否有变，session是否过期，
+	 *  验证权限信息是否变化
+	 *  验证是否为新session 只有创建sessionid时才为true
+	 *  当session的attributes发生变化，或者 _force 为true 或者权限信息发生变化时，
+	 *  都满足时才执行session更新操作
      * Store the provided session in memcached if the session was modified
      * or if the session needs to be relocated.
      *
@@ -980,6 +1018,7 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
         	System.out.println("------------------->backupSession-->msmSession == null");
             _log.debug( "No session found in session map for " + sessionId );
             if ( !_sticky ) {
+            	//更新有效性验证信息，和备份的有效性验证信息
                 _lockingStrategy.onBackupWithoutLoadedSession( sessionId, requestId, _backupSessionService );
             }
             return new SimpleFuture<BackupResult>( BackupResult.SKIPPED );
@@ -990,10 +1029,11 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
             return new SimpleFuture<BackupResult>( BackupResult.SKIPPED );
         }
         
+        //钝化 session ？ 或者理解为生效新添加的session属性？
         if ( !_sticky ) {
             msmSession.passivate();
         }
-
+        //传递的 sessionIdChanged || msmSession sessionIdChanged || _sticky 为false && session未超时
         final boolean force = sessionIdChanged || msmSession.isSessionIdChanged() || !_sticky && (msmSession.getSecondsSinceLastBackup() >= msmSession.getMaxInactiveInterval());
         final Future<BackupResult> result = _backupSessionService.backupSession( msmSession, force );
 
@@ -1045,8 +1085,8 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
      *  如果不存在，则在储存未命中的sessionid，释放锁，返回null; <br/>
      * Assumes that before you checked {@link #canHitMemcached(String)}.
      */
+ // FIXME
     private MemcachedBackupSession loadFromMemcached( final String sessionId ) {
-    	dfdd
         final String nodeId = _sessionIdFormat.extractMemcachedId( sessionId );
         if ( nodeId == null ) {
             throw new IllegalArgumentException( "The sessionId should contain a nodeId, this should be checked" +
@@ -1086,6 +1126,7 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
                 if ( object != null ) {
                     final MemcachedBackupSession result;
                     
+                    // 转MemcachedBackupSession对象
                     if ( object instanceof MemcachedBackupSession ) {
                         result = (MemcachedBackupSession) object;
                     }
