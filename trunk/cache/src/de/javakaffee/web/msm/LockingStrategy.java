@@ -248,7 +248,8 @@ public abstract class LockingStrategy {
     }
 
     /**
-     *  仅对 有效性验证信息操作的方法
+     * <p>更新有效性验证信息和备份的有效性验证信息</p>
+     *  当前容器中没有session对象时，更新有效性验证信息，和 备份的有效性验证信息
      *  首先 更新有效性验证信息 "validity:" + sessionId;
      *  其次 更新备份的有效性验证信息"bak:" + "validity:" + sessionId; <br/>
      * Is invoked for the backup of a non-sticky session that was not accessed for the current request.
@@ -300,7 +301,7 @@ public abstract class LockingStrategy {
     }
 
     /**
-     * 
+     * <p>更新 session有效性验证信息，更新session信息，更新 备份 session信息</p>
      * Is invoked after the backup of the session is initiated, it's represented by the provided backupResult. The
      * requestId is identifying the request.
      */
@@ -485,8 +486,8 @@ public abstract class LockingStrategy {
     }
     
     /**
-     * 首先检查memcached 是否包含 session.getIdInternal()
-     * 不包含的情况下，才将session 更新至memcached中
+     * 当memcached中不包含当前session时，对session做更新操作。
+     * 否则 不执行更新操作
      * @param session
      * @param backupSessionService
      * @throws InterruptedException
@@ -509,7 +510,7 @@ public abstract class LockingStrategy {
     }
 
     /**
-     * 备份session对象到 memcached
+     * 对memcached session对象 更新
      * @param session
      * @param backupSessionService
      * @throws InterruptedException
@@ -561,7 +562,7 @@ public abstract class LockingStrategy {
         public Void call() throws Exception {
 
             final BackupResult backupResult = _result.get();
-
+            
             if ( _pingSessionIfBackupWasSkipped ) {
                 if ( backupResult.getStatus() == BackupResultStatus.SKIPPED ) {
                     pingSession( _session, _backupSessionService );
@@ -572,20 +573,22 @@ public abstract class LockingStrategy {
              * For non-sticky sessions we store a backup of the session in a secondary memcached node (under a special key
              * that's resolved by the SuffixBasedNodeLocator), but only when we have more than 1 memcached node configured...
              */
+            //备份操作
             if ( _storeSecondaryBackup ) {
                 try {
                     if ( _log.isDebugEnabled() ) {
                         _log.debug( "Storing backup in secondary memcached for non-sticky session " + _session.getId() );
                     }
                     // 前一个操作被忽略的情况下
+                    //备份session
                     if ( backupResult.getStatus() == BackupResultStatus.SKIPPED ) {
                         pingSessionBackup( _session );
                     }
-                    //
+                    //直接更新 备份session
                     else {
                         saveSessionBackupFromResult( backupResult );
                     }
-
+                    //更新备份的有效性验证信息
                     saveValidityBackup();
                 } catch( final NodeFailureException e ) {
                     // handle an unavailable secondary/backup node (fix for issue #83)
@@ -675,7 +678,8 @@ public abstract class LockingStrategy {
     }
 
     /**
-     * 仅作以下操作：
+     * <p>更新有效性验证信息和备份的有效性验证信息</p>
+     * 仅作以下操作：memcached 中set 有效性验证信息备份："bak:" + "validity:" + sessionId;
      * 测试 memcached中是否包含_sessionId;
      * 测试 memcached中是否包含"bak:" + sessionId;
      * 更新 memcached中包含的 有效性验证备份信息"bak:" + "validity:" + sessionId;
@@ -689,7 +693,8 @@ public abstract class LockingStrategy {
         private final int _maxInactiveInterval;
 
         /**
-         * 仅作以下操作：
+         * <p>更新有效性验证信息和备份的有效性验证信息</p>
+         * 仅作以下操作：memcached 中set 有效性验证信息备份："bak:" + "validity:" + sessionId;
          * 测试 memcached中是否包含_sessionId;
          * 测试 memcached中是否包含"bak:" + sessionId;
          * 更新 memcached中包含的 有效性验证备份信息"bak:" + "validity:" + sessionId;

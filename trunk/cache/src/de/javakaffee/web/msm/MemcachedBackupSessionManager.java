@@ -239,7 +239,9 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     * 
     */
     private boolean _sticky = true;
+    //锁类型
     private String _lockingMode;
+    //锁业务类
     private LockingStrategy _lockingStrategy;
     
     //启动时，初始化加入容器中
@@ -733,6 +735,7 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     * 	如果不是同一个容器则说明该请求为别的容器的session请求，
     * 	加载本地容器session，如果为空，则加载 memcached 中的session 重新将该session对象
     * 	加入本地容器中
+    * 注:SessionTrackerValve中调用
     */
     @Override
     public String changeSessionIdOnTomcatFailover( final String requestedSessionId ) {
@@ -820,10 +823,12 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     }
 
     /**
+     * 
      * 如果 _sticky 为true 则从本地容器查找session，验证session的有效性isValid()，
      * 		验证session的nodeid是否可用（如不可用将查找可用的新nodeid），封装新的sessionid，并返回封装后的sessionid串
      * 如果 _sticky 为false则从memcached加载session的备份信息，需验证 备份的有效性	session验证信息是否有效，
      * 		验证都通过的情况下，将新加载的备份session重新加入本地容器中。并返回封装后的sessionid串
+     * 注:SessionTrackerValve中调用
      */
     @Override
     public String changeSessionIdOnMemcachedFailover( final String requestedSessionId ) {
@@ -850,7 +855,7 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
                     }
                 }
             }
-            //memcached 加载session
+            //memcached 加载备份session
             else {
             	//memcached 中加载 ，并且激活session
                 /* for non-sticky sessions we check the validity info
@@ -877,12 +882,14 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
     }
 
     /**
+     * 从memcached中加载备份的MemcachedBackupSession对象信息备份的SessionValidityInfo;
      * 如果一下出现无效的情况，直接返回null,
      * 首先验证 NodeId可用性，
      * 其次验证的备份的有效性验证信息("bak:" + "validity:" + sessionid)是否有效
      * 然后反序列化备份的session对象（"bak:" + sessionId）
      * 更新反序列化备份的session对象时间戳属性
      * 并且返回 session对象
+     * 注:SessionTrackerValve--->changeSessionIdOnMemcachedFailover中调用
      * @param requestedSessionId
      * @return
      */
@@ -995,6 +1002,7 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
 	 *  验证是否为新session 只有创建sessionid时才为true
 	 *  当session的attributes发生变化，或者 _force 为true 或者权限信息发生变化时，
 	 *  都满足时才执行session更新操作
+	 *  注:SessionTrackerValve中调用 <br/>
      * Store the provided session in memcached if the session was modified
      * or if the session needs to be relocated.
      *
