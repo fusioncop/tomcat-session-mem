@@ -342,15 +342,15 @@ class SuffixBasedNodeLocator implements NodeLocator {
         public Collection<Operation> destroyInputQueue() {
             throw new UnsupportedOperationException();
         }
-
+        @Override
         public void authComplete() {
             throw new UnsupportedOperationException();
         }
-
+        @Override
         public void insertOp( final Operation arg0 ) {
             throw new UnsupportedOperationException();
         }
-
+        @Override
         public void setupForAuth() {
             throw new UnsupportedOperationException();
         }
