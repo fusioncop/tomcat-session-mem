@@ -1,22 +1,11 @@
 
 
 import java.io.IOException;
-import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import net.spy.memcached.DefaultConnectionFactory;
 import net.spy.memcached.MemcachedClient;
-
-import de.javakaffee.web.msm.TranscoderService;
 
 public class Test{
 
@@ -85,7 +74,10 @@ public class Test{
 //		testMemcached();
 		testMemcached1();
 		testMemcached2();
+//		testEqual("binary");
 	}
+	
+	
 	
 	public static void testMemcached(){
 		try {
@@ -97,22 +89,22 @@ public class Test{
 			e.printStackTrace();
 		}
 	}
+	public static final String sessionid = "F988C878956FEF24B92759DC0F2CA61A-n2.tomcat1";
+	public static final String validity = "validity:" + sessionid;
+	public static final String lock = "lock:" + sessionid;
+	public static final String bak = "bak:" + sessionid;
+	public static final String bak_validity = "bak:validity:" + sessionid;
 	
 	public static void testMemcached1(){
 		try {
 			final MemcachedClient client = new MemcachedClient( new DefaultConnectionFactory(),
 			        Arrays.asList( new InetSocketAddress( "192.168.119.170", 11211 )) );
-			System.out.println(client.get("validity:F9DC8CCA3F2019113CA40D47C07036E5-n1"));
-			System.out.println(client.get("lock:baF9DC8CCA3F2019113CA40D47C07036E5-n1"));
-			System.out.println(client.get("bak:F9DC8CCA3F2019113CA40D47C07036E5-n1"));
-			System.out.println(client.get("bak:validity:F9DC8CCA3F2019113CA40D47C07036E5-n1"));
-			System.out.println(client.get("F9DC8CCA3F2019113CA40D47C07036E5-n1"));
+			System.out.println(client.get(sessionid));
+			System.out.println(client.get(validity));
+			System.out.println(client.get(lock));
+			System.out.println(client.get(bak));
+			System.out.println(client.get(bak_validity));
 			
-			System.out.println(client.get("validity:F9DC8CCA3F2019113CA40D47C07036E5-n2"));
-			System.out.println(client.get("lock:baF9DC8CCA3F2019113CA40D47C07036E5-n2"));
-			System.out.println(client.get("bak:F9DC8CCA3F2019113CA40D47C07036E5-n2"));
-			System.out.println(client.get("bak:validity:F9DC8CCA3F2019113CA40D47C07036E5-n2"));
-			System.out.println(client.get("F9DC8CCA3F2019113CA40D47C07036E5-n2"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -122,20 +114,24 @@ public class Test{
 		try {
 			final MemcachedClient client = new MemcachedClient( new DefaultConnectionFactory(),
 			        Arrays.asList(new InetSocketAddress( "192.168.119.166", 11211 )) );
-			System.out.println(client.get("validity:F9DC8CCA3F2019113CA40D47C07036E5-n1"));
-			System.out.println(client.get("lock:baF9DC8CCA3F2019113CA40D47C07036E5-n1"));
-			System.out.println(client.get("bak:F9DC8CCA3F2019113CA40D47C07036E5-n1"));
-			System.out.println(client.get("bak:validity:F9DC8CCA3F2019113CA40D47C07036E5-n1"));
-			System.out.println(client.get("F9DC8CCA3F2019113CA40D47C07036E5-n1"));
-			
-			System.out.println(client.get("validity:F9DC8CCA3F2019113CA40D47C07036E5-n2"));
-			System.out.println(client.get("lock:baF9DC8CCA3F2019113CA40D47C07036E5-n2"));
-			System.out.println(client.get("bak:F9DC8CCA3F2019113CA40D47C07036E5-n2"));
-			System.out.println(client.get("bak:validity:F9DC8CCA3F2019113CA40D47C07036E5-n2"));
-			System.out.println(client.get("F9DC8CCA3F2019113CA40D47C07036E5-n2"));
+			System.out.println(client.get(sessionid));
+			System.out.println(client.get(validity));
+			System.out.println(client.get(lock));
+			System.out.println(client.get(bak));
+			System.out.println(client.get(bak_validity));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
+    private static final String PROTOCOL_TEXT = "text";
+    private static final String PROTOCOL_BINARY = "binary";
+	public static void testEqual(String memcachedProtocol){
+		System.out.println( "Illegal memcachedProtocol " + memcachedProtocol + ", using default (" + memcachedProtocol + ")." );
+		if ( !PROTOCOL_TEXT.equals( memcachedProtocol )
+                && !PROTOCOL_BINARY.equals( memcachedProtocol ) ) {
+            System.out.println( "Illegal memcachedProtocol " + memcachedProtocol + ", using default (" + memcachedProtocol + ")." );
+            return;
+        }
+	}
 }
