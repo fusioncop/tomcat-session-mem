@@ -576,6 +576,6 @@ public class McastService implements MembershipService,MembershipListener {
         p.setProperty("tcpListenHost","127.0.0.1");
         service.setProperties(p);
         service.start();
-        Thread.sleep(60*1000*60);
+//        Thread.sleep(60*1000*60);
     }
 }
