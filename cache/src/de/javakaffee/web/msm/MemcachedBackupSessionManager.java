@@ -714,7 +714,7 @@ public class MemcachedBackupSessionManager extends ManagerBase implements Lifecy
         // e.g. invoked by the AuthenticatorBase (for BASIC auth) on login to prevent session fixation
         // so that session backup won't be omitted we must store this event
     	// FIXME ±¨´í£¬¹Ê×¢ÊÍÖ®
-    	//        super.changeSessionId( session );
+    	super.changeSessionId( session );
         ((MemcachedBackupSession)session).setSessionIdChanged( true );
     }
 
