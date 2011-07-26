@@ -1,0 +1,28 @@
+###修改 <Engine>节点
+
+<Engine name="Catalina" defaultHost="localhost" jvmRoute="tomcat2">
+########################################
+
+###在<Context>节点中加入
+
+<Manager className="de.javakaffee.web.msm.MemcachedBackupSessionManager"
+	memcachedNodes="n1:192.168.119.170:11211 n2:192.168.119.166:11211"
+	requestUriIgnorePattern=".*/.(png|gif|jpg|css|js|html|jpeg)$"
+	sessionBackupAsync="true"
+	sessionBackupTimeout="100"
+	transcoderFactoryClass="de.javakaffee.web.msm.JavaSerializationTranscoderFactory"
+/>
+########################################
+
+
+### lib 中添加jar
+
+javolution-5.4.3.1.jar
+kryo-1.03.jar
+kryo-serializers-0.8.jar
+memcached-2.4.2.jar
+memcached-session-manager-1.5.0.jar
+memcached-session-manager-tc6-1.5.0.jar
+minlog-1.2.jar
+msm-kryo-serializer-1.5.0.jar
+########################################
