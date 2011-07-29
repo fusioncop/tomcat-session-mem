@@ -70,10 +70,10 @@ public class Test{
 //		TimeUnit timeUnit = TimeUnit.SECONDS;
 //		System.out.println(timeUnit.toMillis( 500L ));
 		
-		
+		System.out.println((2<<8));
 //		testMemcached();
-		testMemcached1();
-		testMemcached2();
+//		testMemcached1();
+//		testMemcached2();
 //		testEqual("binary");
 	}
 	
@@ -89,7 +89,7 @@ public class Test{
 			e.printStackTrace();
 		}
 	}
-	public static final String sessionid = "F988C878956FEF24B92759DC0F2CA61A-n2.tomcat1";
+	public static final String sessionid = "E78FCCBD648DA06A51A52383DD39E254-n2.tomcat2";
 	public static final String validity = "validity:" + sessionid;
 	public static final String lock = "lock:" + sessionid;
 	public static final String bak = "bak:" + sessionid;
