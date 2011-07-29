@@ -31,10 +31,6 @@ public class XStreamTranscoderFactory implements TranscoderFactory {
 
     private XStreamTranscoder _transcoder;
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public SessionAttributesTranscoder createTranscoder( final Manager manager ) {
         return getTranscoder( manager );
     }
@@ -46,18 +42,10 @@ public class XStreamTranscoderFactory implements TranscoderFactory {
         return _transcoder;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public SessionTranscoder createSessionTranscoder( final Manager manager ) {
         return getTranscoder( manager );
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void setCopyCollectionsForSerialization( final boolean val ) {
         if ( val ) {
             throw new UnsupportedOperationException( "XStream's CollectionConverter does not seem" +
