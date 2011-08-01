@@ -70,9 +70,9 @@ public class Test{
 //		TimeUnit timeUnit = TimeUnit.SECONDS;
 //		System.out.println(timeUnit.toMillis( 500L ));
 		
-		System.out.println((2<<8));
+//		System.out.println((2<<8));
 //		testMemcached();
-//		testMemcached1();
+		testMemcached1();
 //		testMemcached2();
 //		testEqual("binary");
 	}
