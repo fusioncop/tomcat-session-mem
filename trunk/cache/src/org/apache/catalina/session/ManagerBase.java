@@ -1012,7 +1012,6 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
      * Generate and return a new session identifier.
      */
     protected synchronized String generateSessionId() {
-
         byte random[] = new byte[16];
         String jvmRoute = getJvmRoute();
         String result = null;
@@ -1020,6 +1019,7 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
         // Render the result as a String of hexadecimal digits
         StringBuffer buffer = new StringBuffer();
         do {
+        	// Çå¿Õ²Ù×÷
             int resultLenBytes = 0;
             if (result != null) {
                 buffer = new StringBuffer();
@@ -1029,9 +1029,7 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
             while (resultLenBytes < this.sessionIdLength) {
                 getRandomBytes(random);
                 random = getDigest().digest(random);
-                for (int j = 0;
-                j < random.length && resultLenBytes < this.sessionIdLength;
-                j++) {
+                for (int j = 0;  j < random.length && resultLenBytes < this.sessionIdLength; j++) {
                     byte b1 = (byte) ((random[j] & 0xf0) >> 4);
                     byte b2 = (byte) (random[j] & 0x0f);
                     if (b1 < 10)
