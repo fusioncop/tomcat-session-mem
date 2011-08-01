@@ -105,7 +105,7 @@ public class SimpleTcpCluster
     public static final String RECEIVE_MESSAGE_FAILURE_EVENT = "receive_message_failure";
     
     /**
-     * Group channel.
+     * Group channel.  <Channel>
      */
     protected Channel channel = new GroupChannel();
 
@@ -158,12 +158,13 @@ public class SimpleTcpCluster
 
     protected ClusterManager managerTemplate = new DeltaManager();
 
+//    <Cluster> 节点中配置的所有<Value>
     private List valves = new ArrayList();
 
     private org.apache.catalina.ha.ClusterDeployer clusterDeployer;
 
     /**
-     * Listeners of messages
+     * <ClusterListener>
      */
     protected List clusterListeners = new ArrayList();
 
