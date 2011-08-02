@@ -802,7 +802,7 @@
 			    default_color 	TRUE)
 			label      	(object ItemLabel
 			    Parent_View 	@12
-			    location   	(33, 2257)
+			    location   	(33, 2254)
 			    fill_color 	13434879
 			    nlines     	1
 			    max_width  	302
@@ -810,7 +810,7 @@
 			    label      	"Valve")
 			stereotype 	(object ItemLabel
 			    Parent_View 	@12
-			    location   	(33, 2207)
+			    location   	(33, 2204)
 			    fill_color 	13434879
 			    anchor     	10
 			    nlines     	1
@@ -823,7 +823,7 @@
 			fill_color 	13434879
 			quidu      	"4E365D26036B"
 			width      	320
-			height     	192
+			height     	198
 			annotation 	8
 			autoResize 	TRUE)
 		    (object ClassView "Class" "Logical View::ClusterValve" @13
@@ -842,7 +842,7 @@
 			    default_color 	TRUE)
 			label      	(object ItemLabel
 			    Parent_View 	@13
-			    location   	(40, 1920)
+			    location   	(40, 1917)
 			    fill_color 	13434879
 			    nlines     	1
 			    max_width  	356
@@ -850,7 +850,7 @@
 			    label      	"ClusterValve")
 			stereotype 	(object ItemLabel
 			    Parent_View 	@13
-			    location   	(40, 1870)
+			    location   	(40, 1867)
 			    fill_color 	13434879
 			    anchor     	10
 			    nlines     	1
@@ -863,7 +863,7 @@
 			fill_color 	13434879
 			quidu      	"4E365D39007D"
 			width      	374
-			height     	192
+			height     	198
 			annotation 	8
 			autoResize 	TRUE)
 		    (object ClassView "Class" "Logical View::ReplicationValve" @14
@@ -882,7 +882,7 @@
 			    default_color 	TRUE)
 			label      	(object ItemLabel
 			    Parent_View 	@14
-			    location   	(442, 1288)
+			    location   	(442, 1285)
 			    fill_color 	13434879
 			    nlines     	1
 			    max_width  	464
@@ -893,7 +893,7 @@
 			fill_color 	13434879
 			quidu      	"4E365D7802BF"
 			width      	482
-			height     	136
+			height     	142
 			annotation 	8
 			autoResize 	TRUE)
 		    (object ClassView "Class" "Logical View::ValveBase" @15
@@ -912,7 +912,7 @@
 			    default_color 	TRUE)
 			label      	(object ItemLabel
 			    Parent_View 	@15
-			    location   	(616, 1905)
+			    location   	(616, 1902)
 			    fill_color 	13434879
 			    nlines     	1
 			    max_width  	330
@@ -923,7 +923,7 @@
 			fill_color 	13434879
 			quidu      	"4E365D9A036B"
 			width      	348
-			height     	136
+			height     	142
 			annotation 	8
 			autoResize 	TRUE)
 		    (object RealizeView "" @16
@@ -946,13 +946,6 @@
 			quidu      	"4E365DB200DA"
 			client     	@13
 			supplier   	@12
-			line_style 	0)
-		    (object UsesView "" @19
-			stereotype 	TRUE
-			line_color 	3342489
-			quidu      	"4E365DB600BB"
-			client     	@4
-			supplier   	@14
 			line_style 	0)))
 	    (object ClassDiagram "GroupChannel"
 		quid       	"4E36514C004E"
@@ -963,7 +956,7 @@
 		origin_x   	0
 		origin_y   	653
 		items      	(list diagram_item_list
-		    (object ClassView "Class" "Logical View::Heartbeat" @20
+		    (object ClassView "Class" "Logical View::Heartbeat" @19
 			ShowCompartmentStereotypes 	TRUE
 			IncludeAttribute 	TRUE
 			IncludeOperation 	TRUE
@@ -978,7 +971,7 @@
 			    color      	0
 			    default_color 	TRUE)
 			label      	(object ItemLabel
-			    Parent_View 	@20
+			    Parent_View 	@19
 			    location   	(342, 137)
 			    fill_color 	13434879
 			    nlines     	1
@@ -986,7 +979,7 @@
 			    justify    	0
 			    label      	"Heartbeat")
 			stereotype 	(object ItemLabel
-			    Parent_View 	@20
+			    Parent_View 	@19
 			    location   	(342, 87)
 			    fill_color 	13434879
 			    anchor     	10
@@ -1003,7 +996,7 @@
 			height     	198
 			annotation 	8
 			autoResize 	TRUE)
-		    (object ClassView "Class" "Logical View::MembershipListener" @21
+		    (object ClassView "Class" "Logical View::MembershipListener" @20
 			ShowCompartmentStereotypes 	TRUE
 			IncludeAttribute 	TRUE
 			IncludeOperation 	TRUE
@@ -1018,7 +1011,7 @@
 			    color      	0
 			    default_color 	TRUE)
 			label      	(object ItemLabel
-			    Parent_View 	@21
+			    Parent_View 	@20
 			    location   	(764, 134)
 			    fill_color 	13434879
 			    nlines     	1
@@ -1026,7 +1019,7 @@
 			    justify    	0
 			    label      	"MembershipListener")
 			stereotype 	(object ItemLabel
-			    Parent_View 	@21
+			    Parent_View 	@20
 			    location   	(764, 84)
 			    fill_color 	13434879
 			    anchor     	10
@@ -1043,7 +1036,7 @@
 			height     	198
 			annotation 	8
 			autoResize 	TRUE)
-		    (object ClassView "Class" "Logical View::ChannelInterceptor" @22
+		    (object ClassView "Class" "Logical View::ChannelInterceptor" @21
 			ShowCompartmentStereotypes 	TRUE
 			IncludeAttribute 	TRUE
 			IncludeOperation 	TRUE
@@ -1058,7 +1051,7 @@
 			    color      	0
 			    default_color 	TRUE)
 			label      	(object ItemLabel
-			    Parent_View 	@22
+			    Parent_View 	@21
 			    location   	(537, 496)
 			    fill_color 	13434879
 			    nlines     	1
@@ -1066,7 +1059,7 @@
 			    justify    	0
 			    label      	"ChannelInterceptor")
 			stereotype 	(object ItemLabel
-			    Parent_View 	@22
+			    Parent_View 	@21
 			    location   	(537, 446)
 			    fill_color 	13434879
 			    anchor     	10
@@ -1083,7 +1076,7 @@
 			height     	198
 			annotation 	8
 			autoResize 	TRUE)
-		    (object ClassView "Class" "Logical View::ChannelInterceptorBase" @23
+		    (object ClassView "Class" "Logical View::ChannelInterceptorBase" @22
 			ShowCompartmentStereotypes 	TRUE
 			IncludeAttribute 	TRUE
 			IncludeOperation 	TRUE
@@ -1098,7 +1091,7 @@
 			    color      	0
 			    default_color 	TRUE)
 			label      	(object ItemLabel
-			    Parent_View 	@23
+			    Parent_View 	@22
 			    location   	(621, 865)
 			    fill_color 	13434879
 			    nlines     	1
@@ -1113,28 +1106,28 @@
 			height     	142
 			annotation 	8
 			autoResize 	TRUE)
-		    (object RealizeView "" @24
+		    (object RealizeView "" @23
 			stereotype 	TRUE
 			line_color 	3342489
 			quidu      	"4E36520201A5"
-			client     	@23
-			supplier   	@22
+			client     	@22
+			supplier   	@21
+			line_style 	0)
+		    (object InheritView "" @24
+			stereotype 	TRUE
+			line_color 	3342489
+			quidu      	"4E36523502DE"
+			client     	@21
+			supplier   	@19
 			line_style 	0)
 		    (object InheritView "" @25
 			stereotype 	TRUE
 			line_color 	3342489
-			quidu      	"4E36523502DE"
-			client     	@22
+			quidu      	"4E365239009C"
+			client     	@21
 			supplier   	@20
 			line_style 	0)
-		    (object InheritView "" @26
-			stereotype 	TRUE
-			line_color 	3342489
-			quidu      	"4E365239009C"
-			client     	@22
-			supplier   	@21
-			line_style 	0)
-		    (object ClassView "Class" "Logical View::Channel" @27
+		    (object ClassView "Class" "Logical View::Channel" @26
 			ShowCompartmentStereotypes 	TRUE
 			IncludeAttribute 	TRUE
 			IncludeOperation 	TRUE
@@ -1149,7 +1142,7 @@
 			    color      	0
 			    default_color 	TRUE)
 			label      	(object ItemLabel
-			    Parent_View 	@27
+			    Parent_View 	@26
 			    location   	(1621, 162)
 			    fill_color 	13434879
 			    nlines     	1
@@ -1157,7 +1150,7 @@
 			    justify    	0
 			    label      	"Channel")
 			stereotype 	(object ItemLabel
-			    Parent_View 	@27
+			    Parent_View 	@26
 			    location   	(1621, 112)
 			    fill_color 	13434879
 			    anchor     	10
@@ -1174,7 +1167,7 @@
 			height     	198
 			annotation 	8
 			autoResize 	TRUE)
-		    (object ClassView "Class" "Logical View::ManagedChannel" @28
+		    (object ClassView "Class" "Logical View::ManagedChannel" @27
 			ShowCompartmentStereotypes 	TRUE
 			IncludeAttribute 	TRUE
 			IncludeOperation 	TRUE
@@ -1189,7 +1182,7 @@
 			    color      	0
 			    default_color 	TRUE)
 			label      	(object ItemLabel
-			    Parent_View 	@28
+			    Parent_View 	@27
 			    location   	(1511, 480)
 			    fill_color 	13434879
 			    nlines     	1
@@ -1197,7 +1190,7 @@
 			    justify    	0
 			    label      	"ManagedChannel")
 			stereotype 	(object ItemLabel
-			    Parent_View 	@28
+			    Parent_View 	@27
 			    location   	(1511, 430)
 			    fill_color 	13434879
 			    anchor     	10
@@ -1214,14 +1207,14 @@
 			height     	198
 			annotation 	8
 			autoResize 	TRUE)
-		    (object InheritView "" @29
+		    (object InheritView "" @28
 			stereotype 	TRUE
 			line_color 	3342489
 			quidu      	"4E36526803A9"
-			client     	@28
-			supplier   	@27
+			client     	@27
+			supplier   	@26
 			line_style 	0)
-		    (object ClassView "Class" "Logical View::GroupChannel" @30
+		    (object ClassView "Class" "Logical View::GroupChannel" @29
 			ShowCompartmentStereotypes 	TRUE
 			IncludeAttribute 	TRUE
 			IncludeOperation 	TRUE
@@ -1236,7 +1229,7 @@
 			    color      	0
 			    default_color 	TRUE)
 			label      	(object ItemLabel
-			    Parent_View 	@30
+			    Parent_View 	@29
 			    location   	(1756, 1140)
 			    fill_color 	13434879
 			    nlines     	1
@@ -1251,21 +1244,21 @@
 			height     	142
 			annotation 	8
 			autoResize 	TRUE)
-		    (object RealizeView "" @31
+		    (object RealizeView "" @30
 			stereotype 	TRUE
 			line_color 	3342489
 			quidu      	"4E3652B000DA"
-			client     	@30
-			supplier   	@28
+			client     	@29
+			supplier   	@27
 			line_style 	0)
-		    (object InheritView "" @32
+		    (object InheritView "" @31
 			stereotype 	TRUE
 			line_color 	3342489
 			quidu      	"4E3652E30242"
-			client     	@30
-			supplier   	@23
+			client     	@29
+			supplier   	@22
 			line_style 	0)
-		    (object ClassView "Class" "Logical View::TcpFailureDetector" @33
+		    (object ClassView "Class" "Logical View::TcpFailureDetector" @32
 			ShowCompartmentStereotypes 	TRUE
 			IncludeAttribute 	TRUE
 			IncludeOperation 	TRUE
@@ -1280,7 +1273,7 @@
 			    color      	0
 			    default_color 	TRUE)
 			label      	(object ItemLabel
-			    Parent_View 	@33
+			    Parent_View 	@32
 			    location   	(772, 1752)
 			    fill_color 	13434879
 			    nlines     	1
@@ -1295,14 +1288,14 @@
 			height     	206
 			annotation 	8
 			autoResize 	TRUE)
-		    (object InheritView "" @34
+		    (object InheritView "" @33
 			stereotype 	TRUE
 			line_color 	3342489
 			quidu      	"4E36581803A9"
-			client     	@33
-			supplier   	@23
+			client     	@32
+			supplier   	@22
 			line_style 	0)
-		    (object ClassView "Class" "Logical View::Runnable" @35
+		    (object ClassView "Class" "Logical View::Runnable" @34
 			ShowCompartmentStereotypes 	TRUE
 			IncludeAttribute 	TRUE
 			IncludeOperation 	TRUE
@@ -1317,7 +1310,7 @@
 			    color      	0
 			    default_color 	TRUE)
 			label      	(object ItemLabel
-			    Parent_View 	@35
+			    Parent_View 	@34
 			    location   	(41, 865)
 			    fill_color 	13434879
 			    nlines     	1
@@ -1325,7 +1318,7 @@
 			    justify    	0
 			    label      	"Runnable")
 			stereotype 	(object ItemLabel
-			    Parent_View 	@35
+			    Parent_View 	@34
 			    location   	(41, 815)
 			    fill_color 	13434879
 			    anchor     	10
@@ -1342,7 +1335,7 @@
 			height     	198
 			annotation 	8
 			autoResize 	TRUE)
-		    (object ClassView "Class" "Logical View::MessageDispatchInterceptor" @36
+		    (object ClassView "Class" "Logical View::MessageDispatchInterceptor" @35
 			ShowCompartmentStereotypes 	TRUE
 			IncludeAttribute 	TRUE
 			IncludeOperation 	TRUE
@@ -1357,7 +1350,7 @@
 			    color      	0
 			    default_color 	TRUE)
 			label      	(object ItemLabel
-			    Parent_View 	@36
+			    Parent_View 	@35
 			    location   	(103, 1261)
 			    fill_color 	13434879
 			    nlines     	2
@@ -1372,21 +1365,21 @@
 			height     	213
 			annotation 	8
 			autoResize 	TRUE)
-		    (object InheritView "" @37
+		    (object InheritView "" @36
 			stereotype 	TRUE
 			line_color 	3342489
 			quidu      	"4E365869002E"
-			client     	@36
-			supplier   	@23
+			client     	@35
+			supplier   	@22
 			line_style 	0)
-		    (object UsesView "" @38
+		    (object UsesView "" @37
 			stereotype 	TRUE
 			line_color 	3342489
 			quidu      	"4E36586A02BF"
-			client     	@36
-			supplier   	@35
+			client     	@35
+			supplier   	@34
 			line_style 	0)
-		    (object ClassView "Class" "Logical View::MessageDispatch15Interceptor" @39
+		    (object ClassView "Class" "Logical View::MessageDispatch15Interceptor" @38
 			ShowCompartmentStereotypes 	TRUE
 			IncludeAttribute 	TRUE
 			IncludeOperation 	TRUE
@@ -1401,7 +1394,7 @@
 			    color      	0
 			    default_color 	TRUE)
 			label      	(object ItemLabel
-			    Parent_View 	@39
+			    Parent_View 	@38
 			    location   	(9, 1719)
 			    fill_color 	13434879
 			    nlines     	1
@@ -1416,14 +1409,14 @@
 			height     	307
 			annotation 	8
 			autoResize 	TRUE)
-		    (object InheritView "" @40
+		    (object InheritView "" @39
 			stereotype 	TRUE
 			line_color 	3342489
 			quidu      	"4E36588002BF"
-			client     	@39
-			supplier   	@36
+			client     	@38
+			supplier   	@35
 			line_style 	0)
-		    (object ClassView "Class" "Logical View::ThroughputInterceptor" @41
+		    (object ClassView "Class" "Logical View::ThroughputInterceptor" @40
 			ShowCompartmentStereotypes 	TRUE
 			IncludeAttribute 	TRUE
 			IncludeOperation 	TRUE
@@ -1438,7 +1431,7 @@
 			    color      	0
 			    default_color 	TRUE)
 			label      	(object ItemLabel
-			    Parent_View 	@41
+			    Parent_View 	@40
 			    location   	(1300, 1749)
 			    fill_color 	13434879
 			    nlines     	1
@@ -1453,12 +1446,12 @@
 			height     	213
 			annotation 	8
 			autoResize 	TRUE)
-		    (object InheritView "" @42
+		    (object InheritView "" @41
 			stereotype 	TRUE
 			line_color 	3342489
 			quidu      	"4E3658B5029F"
-			client     	@41
-			supplier   	@23
+			client     	@40
+			supplier   	@22
 			line_style 	0)))
 	    (object ClassDiagram "BackupManager"
 		quid       	"4E36539F036B"
@@ -1469,7 +1462,7 @@
 		origin_x   	0
 		origin_y   	0
 		items      	(list diagram_item_list
-		    (object ClassView "Class" "Logical View::MapOwner" @43
+		    (object ClassView "Class" "Logical View::MapOwner" @42
 			ShowCompartmentStereotypes 	TRUE
 			IncludeAttribute 	TRUE
 			IncludeOperation 	TRUE
@@ -1484,7 +1477,7 @@
 			    color      	0
 			    default_color 	TRUE)
 			label      	(object ItemLabel
-			    Parent_View 	@43
+			    Parent_View 	@42
 			    location   	(1621, 437)
 			    fill_color 	13434879
 			    nlines     	1
@@ -1492,7 +1485,7 @@
 			    justify    	0
 			    label      	"MapOwner")
 			stereotype 	(object ItemLabel
-			    Parent_View 	@43
+			    Parent_View 	@42
 			    location   	(1621, 387)
 			    fill_color 	13434879
 			    anchor     	10
@@ -1509,7 +1502,7 @@
 			height     	198
 			annotation 	8
 			autoResize 	TRUE)
-		    (object ClassView "Class" "Logical View::Manager" @44
+		    (object ClassView "Class" "Logical View::Manager" @43
 			ShowCompartmentStereotypes 	TRUE
 			IncludeAttribute 	TRUE
 			IncludeOperation 	TRUE
@@ -1524,7 +1517,7 @@
 			    color      	0
 			    default_color 	TRUE)
 			label      	(object ItemLabel
-			    Parent_View 	@44
+			    Parent_View 	@43
 			    location   	(867, 127)
 			    fill_color 	13434879
 			    nlines     	1
@@ -1532,7 +1525,7 @@
 			    justify    	0
 			    label      	"Manager")
 			stereotype 	(object ItemLabel
-			    Parent_View 	@44
+			    Parent_View 	@43
 			    location   	(867, 77)
 			    fill_color 	13434879
 			    anchor     	10
@@ -1548,7 +1541,7 @@
 			width      	320
 			height     	192
 			annotation 	8)
-		    (object ClassView "Class" "Logical View::ClusterManager" @45
+		    (object ClassView "Class" "Logical View::ClusterManager" @44
 			ShowCompartmentStereotypes 	TRUE
 			IncludeAttribute 	TRUE
 			IncludeOperation 	TRUE
@@ -1563,7 +1556,7 @@
 			    color      	0
 			    default_color 	TRUE)
 			label      	(object ItemLabel
-			    Parent_View 	@45
+			    Parent_View 	@44
 			    location   	(812, 480)
 			    fill_color 	13434879
 			    nlines     	1
@@ -1571,7 +1564,7 @@
 			    justify    	0
 			    label      	"ClusterManager")
 			stereotype 	(object ItemLabel
-			    Parent_View 	@45
+			    Parent_View 	@44
 			    location   	(812, 430)
 			    fill_color 	13434879
 			    anchor     	10
@@ -1588,14 +1581,14 @@
 			height     	198
 			annotation 	8
 			autoResize 	TRUE)
-		    (object InheritView "" @46
+		    (object InheritView "" @45
 			stereotype 	TRUE
 			line_color 	3342489
 			quidu      	"4E3653F00186"
-			client     	@45
-			supplier   	@44
+			client     	@44
+			supplier   	@43
 			line_style 	0)
-		    (object ClassView "Class" "Logical View::StandardManager" @47
+		    (object ClassView "Class" "Logical View::StandardManager" @46
 			ShowCompartmentStereotypes 	TRUE
 			IncludeAttribute 	TRUE
 			IncludeOperation 	TRUE
@@ -1610,7 +1603,7 @@
 			    color      	0
 			    default_color 	TRUE)
 			label      	(object ItemLabel
-			    Parent_View 	@47
+			    Parent_View 	@46
 			    location   	(97, 480)
 			    fill_color 	13434879
 			    nlines     	1
@@ -1625,7 +1618,7 @@
 			height     	206
 			annotation 	8
 			autoResize 	TRUE)
-		    (object ClassView "Class" "Logical View::BackupManager" @48
+		    (object ClassView "Class" "Logical View::BackupManager" @47
 			ShowCompartmentStereotypes 	TRUE
 			IncludeAttribute 	TRUE
 			IncludeOperation 	TRUE
@@ -1640,7 +1633,7 @@
 			    color      	0
 			    default_color 	TRUE)
 			label      	(object ItemLabel
-			    Parent_View 	@48
+			    Parent_View 	@47
 			    location   	(600, 882)
 			    fill_color 	13434879
 			    nlines     	1
@@ -1655,26 +1648,26 @@
 			height     	238
 			annotation 	8
 			autoResize 	TRUE)
-		    (object InheritView "" @49
+		    (object InheritView "" @48
 			stereotype 	TRUE
 			line_color 	3342489
 			quidu      	"4E365418037A"
-			client     	@48
-			supplier   	@47
+			client     	@47
+			supplier   	@46
+			line_style 	0)
+		    (object RealizeView "" @49
+			stereotype 	TRUE
+			line_color 	3342489
+			quidu      	"4E36541D02BF"
+			client     	@47
+			supplier   	@44
 			line_style 	0)
 		    (object RealizeView "" @50
 			stereotype 	TRUE
 			line_color 	3342489
-			quidu      	"4E36541D02BF"
-			client     	@48
-			supplier   	@45
-			line_style 	0)
-		    (object RealizeView "" @51
-			stereotype 	TRUE
-			line_color 	3342489
 			quidu      	"4E365421036B"
-			client     	@48
-			supplier   	@43
+			client     	@47
+			supplier   	@42
 			line_style 	0)))
 	    (object ClassDiagram "McastService"
 		quid       	"4E36543403D8"
@@ -1685,7 +1678,7 @@
 		origin_x   	0
 		origin_y   	0
 		items      	(list diagram_item_list
-		    (object ClassView "Class" "Logical View::MembershipListener" @52
+		    (object ClassView "Class" "Logical View::MembershipListener" @51
 			ShowCompartmentStereotypes 	TRUE
 			IncludeAttribute 	TRUE
 			IncludeOperation 	TRUE
@@ -1700,20 +1693,20 @@
 			    color      	0
 			    default_color 	TRUE)
 			label      	(object ItemLabel
-			    Parent_View 	@52
-			    location   	(496, 224)
+			    Parent_View 	@51
+			    location   	(490, 221)
 			    fill_color 	13434879
 			    nlines     	1
-			    max_width  	558
+			    max_width  	570
 			    justify    	0
 			    label      	"MembershipListener")
 			stereotype 	(object ItemLabel
-			    Parent_View 	@52
-			    location   	(496, 174)
+			    Parent_View 	@51
+			    location   	(490, 171)
 			    fill_color 	13434879
 			    anchor     	10
 			    nlines     	1
-			    max_width  	558
+			    max_width  	570
 			    justify    	0
 			    label      	"<<Interface>>")
 			icon       	"Interface"
@@ -1721,11 +1714,11 @@
 			line_color 	3342489
 			fill_color 	13434879
 			quidu      	"4E3647260242"
-			width      	576
-			height     	192
+			width      	588
+			height     	198
 			annotation 	8
 			autoResize 	TRUE)
-		    (object ClassView "Class" "Logical View::MembershipService" @53
+		    (object ClassView "Class" "Logical View::MembershipService" @52
 			ShowCompartmentStereotypes 	TRUE
 			IncludeAttribute 	TRUE
 			IncludeOperation 	TRUE
@@ -1740,16 +1733,16 @@
 			    color      	0
 			    default_color 	TRUE)
 			label      	(object ItemLabel
-			    Parent_View 	@53
-			    location   	(1221, 218)
+			    Parent_View 	@52
+			    location   	(1221, 215)
 			    fill_color 	13434879
 			    nlines     	1
 			    max_width  	564
 			    justify    	0
 			    label      	"MembershipService")
 			stereotype 	(object ItemLabel
-			    Parent_View 	@53
-			    location   	(1221, 168)
+			    Parent_View 	@52
+			    location   	(1221, 165)
 			    fill_color 	13434879
 			    anchor     	10
 			    nlines     	1
@@ -1762,10 +1755,10 @@
 			fill_color 	13434879
 			quidu      	"4E36547D0128"
 			width      	582
-			height     	192
+			height     	198
 			annotation 	8
 			autoResize 	TRUE)
-		    (object ClassView "Class" "Logical View::McastService" @54
+		    (object ClassView "Class" "Logical View::McastService" @53
 			ShowCompartmentStereotypes 	TRUE
 			IncludeAttribute 	TRUE
 			IncludeOperation 	TRUE
@@ -1780,8 +1773,8 @@
 			    color      	0
 			    default_color 	TRUE)
 			label      	(object ItemLabel
-			    Parent_View 	@54
-			    location   	(812, 790)
+			    Parent_View 	@53
+			    location   	(812, 787)
 			    fill_color 	13434879
 			    nlines     	1
 			    max_width  	398
@@ -1792,22 +1785,22 @@
 			fill_color 	13434879
 			quidu      	"4E3654910290"
 			width      	416
-			height     	136
+			height     	142
 			annotation 	8
 			autoResize 	TRUE)
-		    (object RealizeView "" @55
+		    (object RealizeView "" @54
 			stereotype 	TRUE
 			line_color 	3342489
 			quidu      	"4E36549900AB"
-			client     	@54
-			supplier   	@52
+			client     	@53
+			supplier   	@51
 			line_style 	0)
-		    (object RealizeView "" @56
+		    (object RealizeView "" @55
 			stereotype 	TRUE
 			line_color 	3342489
 			quidu      	"4E36549C01F4"
-			client     	@54
-			supplier   	@53
+			client     	@53
+			supplier   	@52
 			line_style 	0)))
 	    (object ClassDiagram "NioReceiver"
 		quid       	"4E3654BA002E"
@@ -1818,7 +1811,7 @@
 		origin_x   	0
 		origin_y   	225
 		items      	(list diagram_item_list
-		    (object ClassView "Class" "Logical View::ListenCallback" @57
+		    (object ClassView "Class" "Logical View::ListenCallback" @56
 			ShowCompartmentStereotypes 	TRUE
 			IncludeAttribute 	TRUE
 			IncludeOperation 	TRUE
@@ -1833,20 +1826,20 @@
 			    color      	0
 			    default_color 	TRUE)
 			label      	(object ItemLabel
-			    Parent_View 	@57
-			    location   	(128, 447)
+			    Parent_View 	@56
+			    location   	(124, 444)
 			    fill_color 	13434879
 			    nlines     	1
-			    max_width  	416
+			    max_width  	424
 			    justify    	0
 			    label      	"ListenCallback")
 			stereotype 	(object ItemLabel
-			    Parent_View 	@57
-			    location   	(128, 397)
+			    Parent_View 	@56
+			    location   	(124, 394)
 			    fill_color 	13434879
 			    anchor     	10
 			    nlines     	1
-			    max_width  	416
+			    max_width  	424
 			    justify    	0
 			    label      	"<<Interface>>")
 			icon       	"Interface"
@@ -1854,11 +1847,11 @@
 			line_color 	3342489
 			fill_color 	13434879
 			quidu      	"4E3654FC0280"
-			width      	434
-			height     	192
+			width      	442
+			height     	198
 			annotation 	8
 			autoResize 	TRUE)
-		    (object ClassView "Class" "Logical View::Heartbeat" @58
+		    (object ClassView "Class" "Logical View::Heartbeat" @57
 			ShowCompartmentStereotypes 	TRUE
 			IncludeAttribute 	TRUE
 			IncludeOperation 	TRUE
@@ -1873,16 +1866,16 @@
 			    color      	0
 			    default_color 	TRUE)
 			label      	(object ItemLabel
-			    Parent_View 	@58
-			    location   	(861, 75)
+			    Parent_View 	@57
+			    location   	(861, 72)
 			    fill_color 	13434879
 			    nlines     	1
 			    max_width  	302
 			    justify    	0
 			    label      	"Heartbeat")
 			stereotype 	(object ItemLabel
-			    Parent_View 	@58
-			    location   	(861, 25)
+			    Parent_View 	@57
+			    location   	(861, 22)
 			    fill_color 	13434879
 			    anchor     	10
 			    nlines     	1
@@ -1895,10 +1888,10 @@
 			fill_color 	13434879
 			quidu      	"4E3651A40119"
 			width      	320
-			height     	192
+			height     	198
 			annotation 	8
 			autoResize 	TRUE)
-		    (object ClassView "Class" "Logical View::ChannelReceiver" @59
+		    (object ClassView "Class" "Logical View::ChannelReceiver" @58
 			ShowCompartmentStereotypes 	TRUE
 			IncludeAttribute 	TRUE
 			IncludeOperation 	TRUE
@@ -1913,16 +1906,16 @@
 			    color      	0
 			    default_color 	TRUE)
 			label      	(object ItemLabel
-			    Parent_View 	@59
-			    location   	(738, 446)
+			    Parent_View 	@58
+			    location   	(738, 443)
 			    fill_color 	13434879
 			    nlines     	1
 			    max_width  	474
 			    justify    	0
 			    label      	"ChannelReceiver")
 			stereotype 	(object ItemLabel
-			    Parent_View 	@59
-			    location   	(738, 396)
+			    Parent_View 	@58
+			    location   	(738, 393)
 			    fill_color 	13434879
 			    anchor     	10
 			    nlines     	1
@@ -1935,17 +1928,17 @@
 			fill_color 	13434879
 			quidu      	"4E365524004E"
 			width      	492
-			height     	192
+			height     	198
 			annotation 	8
 			autoResize 	TRUE)
-		    (object InheritView "" @60
+		    (object InheritView "" @59
 			stereotype 	TRUE
 			line_color 	3342489
 			quidu      	"4E36552D0251"
-			client     	@59
-			supplier   	@58
+			client     	@58
+			supplier   	@57
 			line_style 	0)
-		    (object ClassView "Class" "Logical View::Runnable" @61
+		    (object ClassView "Class" "Logical View::Runnable" @60
 			ShowCompartmentStereotypes 	TRUE
 			IncludeAttribute 	TRUE
 			IncludeOperation 	TRUE
@@ -1960,16 +1953,16 @@
 			    color      	0
 			    default_color 	TRUE)
 			label      	(object ItemLabel
-			    Parent_View 	@61
-			    location   	(1380, 433)
+			    Parent_View 	@60
+			    location   	(1380, 430)
 			    fill_color 	13434879
 			    nlines     	1
 			    max_width  	302
 			    justify    	0
 			    label      	"Runnable")
 			stereotype 	(object ItemLabel
-			    Parent_View 	@61
-			    location   	(1380, 383)
+			    Parent_View 	@60
+			    location   	(1380, 380)
 			    fill_color 	13434879
 			    anchor     	10
 			    nlines     	1
@@ -1982,14 +1975,14 @@
 			fill_color 	13434879
 			quidu      	"4E3655380138"
 			width      	320
-			height     	192
+			height     	198
 			annotation 	8
 			autoResize 	TRUE)
-		    (object ClassView "Class" "Logical View::ReceiverBase" @62
+		    (object ClassView "Class" "Logical View::ReceiverBase" @61
 			ShowCompartmentStereotypes 	TRUE
 			IncludeAttribute 	TRUE
 			IncludeOperation 	TRUE
-			location   	(1025, 806)
+			location   	(1028, 812)
 			font       	(object Font
 			    size       	12
 			    face       	"Arial"
@@ -2000,8 +1993,8 @@
 			    color      	0
 			    default_color 	TRUE)
 			label      	(object ItemLabel
-			    Parent_View 	@62
-			    location   	(818, 752)
+			    Parent_View 	@61
+			    location   	(821, 755)
 			    fill_color 	13434879
 			    nlines     	1
 			    max_width  	414
@@ -2012,24 +2005,24 @@
 			fill_color 	13434879
 			quidu      	"4E365557005D"
 			width      	432
-			height     	136
+			height     	142
 			annotation 	8
 			autoResize 	TRUE)
-		    (object RealizeView "" @63
+		    (object RealizeView "" @62
 			stereotype 	TRUE
 			line_color 	3342489
 			quidu      	"4E3655620242"
-			client     	@62
-			supplier   	@59
+			client     	@61
+			supplier   	@58
 			line_style 	0)
-		    (object RealizeView "" @64
+		    (object RealizeView "" @63
 			stereotype 	TRUE
 			line_color 	3342489
 			quidu      	"4E3655680109"
-			client     	@62
-			supplier   	@57
+			client     	@61
+			supplier   	@56
 			line_style 	0)
-		    (object ClassView "Class" "Logical View::RxTaskPool.TaskCreator" @65
+		    (object ClassView "Class" "Logical View::RxTaskPool.TaskCreator" @64
 			ShowCompartmentStereotypes 	TRUE
 			IncludeAttribute 	TRUE
 			IncludeOperation 	TRUE
@@ -2044,16 +2037,16 @@
 			    color      	0
 			    default_color 	TRUE)
 			label      	(object ItemLabel
-			    Parent_View 	@65
-			    location   	(1831, 430)
+			    Parent_View 	@64
+			    location   	(1831, 427)
 			    fill_color 	13434879
 			    nlines     	1
 			    max_width  	676
 			    justify    	0
 			    label      	"RxTaskPool.TaskCreator")
 			stereotype 	(object ItemLabel
-			    Parent_View 	@65
-			    location   	(1831, 380)
+			    Parent_View 	@64
+			    location   	(1831, 377)
 			    fill_color 	13434879
 			    anchor     	10
 			    nlines     	1
@@ -2066,10 +2059,10 @@
 			fill_color 	13434879
 			quidu      	"4E36559B0280"
 			width      	694
-			height     	192
+			height     	198
 			annotation 	8
 			autoResize 	TRUE)
-		    (object ClassView "Class" "Logical View::NioReceiver" @66
+		    (object ClassView "Class" "Logical View::NioReceiver" @65
 			ShowCompartmentStereotypes 	TRUE
 			IncludeAttribute 	TRUE
 			IncludeOperation 	TRUE
@@ -2084,48 +2077,48 @@
 			    color      	0
 			    default_color 	TRUE)
 			label      	(object ItemLabel
-			    Parent_View 	@66
-			    location   	(865, 1214)
+			    Parent_View 	@65
+			    location   	(934, 1230)
 			    fill_color 	13434879
 			    nlines     	1
-			    max_width  	494
+			    max_width  	356
 			    justify    	0
 			    label      	"NioReceiver")
 			icon_style 	"Icon"
 			line_color 	3342489
 			fill_color 	13434879
 			quidu      	"4E3655C203A9"
-			width      	512
-			height     	175
+			width      	374
+			height     	142
 			annotation 	8
 			autoResize 	TRUE)
-		    (object InheritView "" @67
+		    (object InheritView "" @66
 			stereotype 	TRUE
 			line_color 	3342489
 			quidu      	"4E3655C7033C"
-			client     	@66
-			supplier   	@62
+			client     	@65
+			supplier   	@61
+			line_style 	0)
+		    (object RealizeView "" @67
+			stereotype 	TRUE
+			line_color 	3342489
+			quidu      	"4E3655CF0177"
+			client     	@65
+			supplier   	@60
 			line_style 	0)
 		    (object RealizeView "" @68
 			stereotype 	TRUE
 			line_color 	3342489
-			quidu      	"4E3655CF0177"
-			client     	@66
-			supplier   	@61
+			quidu      	"4E3655D503D8"
+			client     	@65
+			supplier   	@64
 			line_style 	0)
 		    (object RealizeView "" @69
 			stereotype 	TRUE
 			line_color 	3342489
-			quidu      	"4E3655D503D8"
-			client     	@66
-			supplier   	@65
-			line_style 	0)
-		    (object RealizeView "" @70
-			stereotype 	TRUE
-			line_color 	3342489
 			quidu      	"4E3655DF001F"
-			client     	@66
-			supplier   	@57
+			client     	@65
+			supplier   	@56
 			line_style 	0)))
 	    (object ClassDiagram "ReplicationTransmitter"
 		quid       	"4E36561F02AF"
@@ -2136,7 +2129,7 @@
 		origin_x   	87
 		origin_y   	0
 		items      	(list diagram_item_list
-		    (object ClassView "Class" "Logical View::Heartbeat" @71
+		    (object ClassView "Class" "Logical View::Heartbeat" @70
 			ShowCompartmentStereotypes 	TRUE
 			IncludeAttribute 	TRUE
 			IncludeOperation 	TRUE
@@ -2151,16 +2144,16 @@
 			    color      	0
 			    default_color 	TRUE)
 			label      	(object ItemLabel
-			    Parent_View 	@71
-			    location   	(767, 190)
+			    Parent_View 	@70
+			    location   	(767, 187)
 			    fill_color 	13434879
 			    nlines     	1
 			    max_width  	302
 			    justify    	0
 			    label      	"Heartbeat")
 			stereotype 	(object ItemLabel
-			    Parent_View 	@71
-			    location   	(767, 140)
+			    Parent_View 	@70
+			    location   	(767, 137)
 			    fill_color 	13434879
 			    anchor     	10
 			    nlines     	1
@@ -2173,10 +2166,10 @@
 			fill_color 	13434879
 			quidu      	"4E3651A40119"
 			width      	320
-			height     	192
+			height     	198
 			annotation 	8
 			autoResize 	TRUE)
-		    (object ClassView "Class" "Logical View::ChannelSender" @72
+		    (object ClassView "Class" "Logical View::ChannelSender" @71
 			ShowCompartmentStereotypes 	TRUE
 			IncludeAttribute 	TRUE
 			IncludeOperation 	TRUE
@@ -2191,16 +2184,16 @@
 			    color      	0
 			    default_color 	TRUE)
 			label      	(object ItemLabel
-			    Parent_View 	@72
-			    location   	(706, 602)
+			    Parent_View 	@71
+			    location   	(706, 599)
 			    fill_color 	13434879
 			    nlines     	1
 			    max_width  	438
 			    justify    	0
 			    label      	"ChannelSender")
 			stereotype 	(object ItemLabel
-			    Parent_View 	@72
-			    location   	(706, 552)
+			    Parent_View 	@71
+			    location   	(706, 549)
 			    fill_color 	13434879
 			    anchor     	10
 			    nlines     	1
@@ -2213,14 +2206,14 @@
 			fill_color 	13434879
 			quidu      	"4E36564401C5"
 			width      	456
-			height     	192
+			height     	198
 			annotation 	8
 			autoResize 	TRUE)
-		    (object ClassView "Class" "Logical View::ReplicationTransmitter" @73
+		    (object ClassView "Class" "Logical View::ReplicationTransmitter" @72
 			ShowCompartmentStereotypes 	TRUE
 			IncludeAttribute 	TRUE
 			IncludeOperation 	TRUE
-			location   	(919, 1437)
+			location   	(887, 1394)
 			font       	(object Font
 			    size       	12
 			    face       	"Arial"
@@ -2231,8 +2224,8 @@
 			    color      	0
 			    default_color 	TRUE)
 			label      	(object ItemLabel
-			    Parent_View 	@73
-			    location   	(622, 1332)
+			    Parent_View 	@72
+			    location   	(590, 1289)
 			    fill_color 	13434879
 			    nlines     	1
 			    max_width  	595
@@ -2246,21 +2239,21 @@
 			height     	238
 			annotation 	8
 			autoResize 	TRUE)
-		    (object InheritView "" @74
+		    (object InheritView "" @73
 			stereotype 	TRUE
 			line_color 	3342489
 			quidu      	"4E365667009C"
-			client     	@72
-			supplier   	@71
+			client     	@71
+			supplier   	@70
 			line_style 	0)
-		    (object RealizeView "" @75
+		    (object RealizeView "" @74
 			stereotype 	TRUE
 			line_color 	3342489
 			quidu      	"4E36566A0128"
-			client     	@73
-			supplier   	@72
+			client     	@72
+			supplier   	@71
 			line_style 	0)
-		    (object ClassView "Class" "Logical View::DataSender" @76
+		    (object ClassView "Class" "Logical View::DataSender" @75
 			ShowCompartmentStereotypes 	TRUE
 			IncludeAttribute 	TRUE
 			IncludeOperation 	TRUE
@@ -2275,16 +2268,16 @@
 			    color      	0
 			    default_color 	TRUE)
 			label      	(object ItemLabel
-			    Parent_View 	@76
-			    location   	(1609, 205)
+			    Parent_View 	@75
+			    location   	(1609, 202)
 			    fill_color 	13434879
 			    nlines     	1
 			    max_width  	352
 			    justify    	0
 			    label      	"DataSender")
 			stereotype 	(object ItemLabel
-			    Parent_View 	@76
-			    location   	(1609, 155)
+			    Parent_View 	@75
+			    location   	(1609, 152)
 			    fill_color 	13434879
 			    anchor     	10
 			    nlines     	1
@@ -2297,10 +2290,10 @@
 			fill_color 	13434879
 			quidu      	"4E36568C00FA"
 			width      	370
-			height     	192
+			height     	198
 			annotation 	8
 			autoResize 	TRUE)
-		    (object ClassView "Class" "Logical View::MultiPointSender" @77
+		    (object ClassView "Class" "Logical View::MultiPointSender" @76
 			ShowCompartmentStereotypes 	TRUE
 			IncludeAttribute 	TRUE
 			IncludeOperation 	TRUE
@@ -2315,20 +2308,20 @@
 			    color      	0
 			    default_color 	TRUE)
 			label      	(object ItemLabel
-			    Parent_View 	@77
-			    location   	(1502, 543)
+			    Parent_View 	@76
+			    location   	(1501, 540)
 			    fill_color 	13434879
 			    nlines     	1
-			    max_width  	478
+			    max_width  	480
 			    justify    	0
 			    label      	"MultiPointSender")
 			stereotype 	(object ItemLabel
-			    Parent_View 	@77
-			    location   	(1502, 493)
+			    Parent_View 	@76
+			    location   	(1501, 490)
 			    fill_color 	13434879
 			    anchor     	10
 			    nlines     	1
-			    max_width  	478
+			    max_width  	480
 			    justify    	0
 			    label      	"<<Interface>>")
 			icon       	"Interface"
@@ -2336,22 +2329,22 @@
 			line_color 	3342489
 			fill_color 	13434879
 			quidu      	"4E36569A005D"
-			width      	496
-			height     	192
+			width      	498
+			height     	198
 			annotation 	8
 			autoResize 	TRUE)
-		    (object InheritView "" @78
+		    (object InheritView "" @77
 			stereotype 	TRUE
 			line_color 	3342489
 			quidu      	"4E3656A40222"
-			client     	@77
-			supplier   	@76
+			client     	@76
+			supplier   	@75
 			line_style 	0)
-		    (object ClassView "Class" "Logical View::PooledParallelSender" @79
+		    (object ClassView "Class" "Logical View::PooledParallelSender" @78
 			ShowCompartmentStereotypes 	TRUE
 			IncludeAttribute 	TRUE
 			IncludeOperation 	TRUE
-			location   	(1749, 1479)
+			location   	(1718, 1391)
 			font       	(object Font
 			    size       	12
 			    face       	"Arial"
@@ -2362,8 +2355,8 @@
 			    color      	0
 			    default_color 	TRUE)
 			label      	(object ItemLabel
-			    Parent_View 	@79
-			    location   	(1496, 1368)
+			    Parent_View 	@78
+			    location   	(1465, 1280)
 			    fill_color 	13434879
 			    nlines     	1
 			    max_width  	507
@@ -2377,14 +2370,14 @@
 			height     	250
 			annotation 	8
 			autoResize 	TRUE)
-		    (object RealizeView "" @80
+		    (object RealizeView "" @79
 			stereotype 	TRUE
 			line_color 	3342489
 			quidu      	"4E3656B6029F"
-			client     	@79
-			supplier   	@77
+			client     	@78
+			supplier   	@76
 			line_style 	0)
-		    (object ClassView "Class" "Logical View::PooledSender" @81
+		    (object ClassView "Class" "Logical View::PooledSender" @80
 			ShowCompartmentStereotypes 	TRUE
 			IncludeAttribute 	TRUE
 			IncludeOperation 	TRUE
@@ -2399,8 +2392,8 @@
 			    color      	0
 			    default_color 	TRUE)
 			label      	(object ItemLabel
-			    Parent_View 	@81
-			    location   	(1937, 921)
+			    Parent_View 	@80
+			    location   	(1937, 918)
 			    fill_color 	13434879
 			    nlines     	1
 			    max_width  	410
@@ -2411,24 +2404,24 @@
 			fill_color 	13434879
 			quidu      	"4E3656F30138"
 			width      	428
-			height     	136
+			height     	142
 			annotation 	8
 			autoResize 	TRUE)
-		    (object RealizeView "" @82
+		    (object RealizeView "" @81
 			stereotype 	TRUE
 			line_color 	3342489
 			quidu      	"4E36572A02EE"
-			client     	@81
-			supplier   	@77
+			client     	@80
+			supplier   	@76
 			line_style 	0)
-		    (object InheritView "" @83
+		    (object InheritView "" @82
 			stereotype 	TRUE
 			line_color 	3342489
 			quidu      	"4E36573B0232"
-			client     	@79
-			supplier   	@81
+			client     	@78
+			supplier   	@80
 			line_style 	0)
-		    (object ClassView "Class" "Logical View::AbstractSender" @84
+		    (object ClassView "Class" "Logical View::AbstractSender" @83
 			ShowCompartmentStereotypes 	TRUE
 			IncludeAttribute 	TRUE
 			IncludeOperation 	TRUE
@@ -2443,8 +2436,8 @@
 			    color      	0
 			    default_color 	TRUE)
 			label      	(object ItemLabel
-			    Parent_View 	@84
-			    location   	(2232, 486)
+			    Parent_View 	@83
+			    location   	(2232, 483)
 			    fill_color 	13434879
 			    nlines     	1
 			    max_width  	438
@@ -2455,29 +2448,29 @@
 			fill_color 	13434879
 			quidu      	"4E3656CE037A"
 			width      	456
-			height     	136
+			height     	142
 			annotation 	8
 			autoResize 	TRUE)
-		    (object RealizeView "" @85
+		    (object RealizeView "" @84
 			stereotype 	TRUE
 			line_color 	3342489
 			quidu      	"4E3656DC007D"
-			client     	@84
-			supplier   	@76
+			client     	@83
+			supplier   	@75
+			line_style 	0)
+		    (object UsesView "" @85
+			stereotype 	TRUE
+			line_color 	3342489
+			quidu      	"4E36571D0213"
+			client     	@80
+			supplier   	@83
 			line_style 	0)
 		    (object UsesView "" @86
 			stereotype 	TRUE
 			line_color 	3342489
-			quidu      	"4E36571D0213"
-			client     	@81
-			supplier   	@84
-			line_style 	0)
-		    (object UsesView "" @87
-			stereotype 	TRUE
-			line_color 	3342489
 			quidu      	"4E3657B2031C"
-			client     	@73
-			supplier   	@79
+			client     	@72
+			supplier   	@78
 			line_style 	0)))))
     root_subsystem 	(object SubSystem "Component View"
 	quid       	"4E3642C8034E"
@@ -6005,7 +5998,7 @@
 		    (object Attribute
 			tool       	"Java"
 			name       	"ClassPath"
-			value      	"C:\\Program Files\\Java\\jdk1.6.0_22\\jre\\bin;C:\\Program Files\\Java\\jdk1.6.0_22\\bin;C:\\Downloads\\apache-tomcat-6.0.32-src\\apache-tomcat-6.0.32-src;C:\\Downloads\\apache-tomcat-6.0.32-src\\apache-tomcat-6.0.32-src\\java")
+			value      	"C:\\Program Files\\Java\\jdk1.6.0_10\\bin;C:\\Program Files\\Java\\jdk1.6.0_10\\jre\\bin;D:\\work-maven\\spring\\org.springframework.beans\\src\\main\\java;D:\\work-maven\\spring\\org.springframework.core\\src\\main\\java;C:\\Documents and Settings\\Administrator\\.m2\\repository\\commons-collections\\commons-collections\\3.2\\commons-collections-3.2.jar;C:\\Documents and Settings\\Administrator\\.m2\\repository\\commons-logging\\commons-logging\\1.1.1\\commons-logging-1.1.1.jar;C:\\Documents and Settings\\Administrator\\.m2\\repository\\log4j\\log4j\\1.2.15\\log4j-1.2.15.jar;C:\\Documents and Settings\\Administrator\\.m2\\repository\\org\\aspectj\\aspectjweaver\\1.6.8\\aspectjweaver-1.6.8.jar;C:\\Documents and Settings\\Administrator\\.m2\\repository\\javax\\servlet\\servlet-api\\2.5\\servlet-api-2.5.jar;C:\\Documents and Settings\\Administrator\\.m2\\repository\\junit\\junit\\4.7\\junit-4.7.jar;C:\\Documents and Settings\\Administrator\\.m2\\repository\\org\\easymock\\easymock\\2.5.1\\easymock-2.5.1.jar;C:\\Documents and Settings\\Administrator\\.m2\\repository\\xmlunit\\xmlunit\\1.2\\xmlunit-1.2.jar;C:\\Documents and Settings\\Administrator\\.m2\\repository\\org\\codehaus\\woodstox\\wstx-asl\\3.2.7\\wstx-asl-3.2.7.jar;C:\\Documents and Settings\\Administrator\\.m2\\repository\\stax\\stax-api\\1.0.1\\stax-api-1.0.1.jar;D:\\work-maven\\spring\\org.springframework.asm\\target\\artifacts\\org.springframework.asm-sources.jar;D:\\work-maven\\spring\\org.springframework.asm\\target\\artifacts\\org.springframework.asm.jar;C:\\Program Files\\Java\\jdk1.6.0_10\\lib\\tools.jar;C:\\Program Files\\Java\\jdk1.6.0_10\\lib\\dt.jar")
 		    (object Attribute
 			tool       	"Java"
 			name       	"ReferenceClasspath"
