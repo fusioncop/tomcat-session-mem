@@ -1,0 +1,9 @@
+#linux
+#非常快
+[root@localhost ~]# while [ 1 ]; do /bin/dd if=/dev/urandom bs=20 count=1 2>/dev/null|md5sum;done
+#非常慢
+[root@localhost ~]# while [ 1 ]; do /bin/dd if=/dev/random bs=20 count=1 2>/dev/null|md5sum;done
+
+
+9295E76888D39CED342D67DB6AF4A699-n2
+9295E76888  D39CED342D  67DB6AF4A6  99
