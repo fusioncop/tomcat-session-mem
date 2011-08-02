@@ -49,12 +49,15 @@ public abstract class ReceiverBase implements ChannelReceiver, ListenCallback, R
     protected static org.apache.juli.logging.Log log = org.apache.juli.logging.LogFactory.getLog(ReceiverBase.class);
     
     private MessageListener listener;
+    // 配置的监听地址
     private String host = "auto";
+    // 配置的监听地址
     private InetAddress bind;
     private int port  = 4000;
     private int securePort = -1;
     private int rxBufSize = 43800;
     private int txBufSize = 25188;
+    //监听是否已经启动
     private boolean listen = false;
     private RxTaskPool pool;
     private boolean direct = true;
