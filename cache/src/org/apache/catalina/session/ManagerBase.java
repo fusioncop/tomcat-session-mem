@@ -71,18 +71,18 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
     protected Log log = LogFactory.getLog(ManagerBase.class);
 
     // ----------------------------------------------------- Instance Variables
-
+    
+    //读取linux随机数的流
     protected DataInputStream randomIS=null;
+    //linux随机数设备目录
     protected String devRandomSource="/dev/urandom";
 
-    /**
-     * The default message digest algorithm to use if we cannot use
-     * the requested one.
-     */
+    //默认的加密规则
     protected static final String DEFAULT_ALGORITHM = "MD5";
 
 
     /**
+     * 加密规则
      * The message digest algorithm to be used when generating session
      * identifiers.  This must be an algorithm supported by the
      * <code>java.security.MessageDigest</code> class on your platform.
@@ -91,12 +91,14 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
 
 
     /**
+     * Manager 关联的容器
      * The Container with which this Manager is associated.
      */
     protected Container container;
 
 
     /**
+     * 加密工具
      * Return the MessageDigest implementation to be used when
      * creating session identifiers.
      */
@@ -112,6 +114,7 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
 
 
     /**
+     * 从windows读取的随机数，组合成的字符串
      * A String initialization parameter used to increase the entropy of
      * the initialization of our random number generator.
      */
@@ -324,6 +327,7 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
 
 
     /**
+     * <p>返回加密工具类</p>
      * Return the MessageDigest object to be used for calculating
      * session identifiers.  If none has been created yet, initialize
      * one the first time this method is called.
@@ -388,6 +392,7 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
 
 
     /**
+     * <p>从windows 获得 32位 byte 的随机数。封装为字符串返回</p>
      * Return the entropy increaser value, or compute a semi-useful value
      * if this String has not yet been set.
      */
@@ -519,6 +524,7 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
     }
 
     /** 
+     * <p>使用 /dev/urandom设备 初始化	devRandomSource and randomIS</p>
      * Use /dev/random-type special device. This is new code, but may reduce
      * the big delay in generating the random.
      *
@@ -567,6 +573,9 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
 
 
     /**
+     * <p>系统时间与windows随机数进行非运算，将得到的数利用 setSeed 赋值给 SecureRandom
+     * 返回此 SecureRandom 对象
+     * </p>
      * Return the random number generator instance we should use for
      * generating session identifiers.  If there is no such generator
      * currently defined, construct and seed a new one.
@@ -578,6 +587,7 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
             long t1 = seed;
             char entropy[] = getEntropy().toCharArray();
             for (int i = 0; i < entropy.length; i++) {
+            	// 目的是将byte 转换为 long
                 long update = ((byte) entropy[i]) << ((i % 8) * 8);
                 seed ^= update;
             }
@@ -978,6 +988,10 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
     }
 
 
+    /**
+     * 检查 linux 随机数设备是否可用，如果可用，则从 linux 读入随机数，否则从windows读取，或者 jdk随机数
+     * @param bytes 随机数数组
+     */
     protected void getRandomBytes(byte bytes[]) {
         // Generate a byte array containing a session identifier
         if (devRandomSource != null && randomIS == null) {
@@ -1029,8 +1043,11 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
             while (resultLenBytes < this.sessionIdLength) {
                 getRandomBytes(random);
                 random = getDigest().digest(random);
+                //转换为 16 进制
                 for (int j = 0;  j < random.length && resultLenBytes < this.sessionIdLength; j++) {
+                	//取该 byte数的低4位  16的倍数
                     byte b1 = (byte) ((random[j] & 0xf0) >> 4);
+                    //取该 byte数的高4位  16的余数
                     byte b2 = (byte) (random[j] & 0x0f);
                     if (b1 < 10)
                         buffer.append((char) ('0' + b1));
