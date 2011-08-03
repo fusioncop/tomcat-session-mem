@@ -41,9 +41,13 @@ import net.spy.memcached.ops.Operation;
  */
 class SuffixBasedNodeLocator implements NodeLocator {
 
+	//MemcachedNode 
     private final List<MemcachedNode> _nodes;
+    //所有可用的节点
     private final NodeIdList _nodeIds;
+    //
     private final NodeIdResolver _resolver;
+    // nodeid MemcachedNode
     private final Map<String, MemcachedNode> _nodesMap;
     private final SessionIdFormat _sessionIdFormat;
 
