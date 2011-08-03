@@ -142,7 +142,7 @@ public class SimpleTcpCluster
     protected LifecycleSupport lifecycle = new LifecycleSupport(this);
 
     /**
-     * Has this component been started?
+     * 该组件是否启动
      */
     protected boolean started = false;
 
@@ -164,7 +164,7 @@ public class SimpleTcpCluster
     private org.apache.catalina.ha.ClusterDeployer clusterDeployer;
 
     /**
-     * <ClusterListener>
+     * <ClusterListener>  Cluster 监听
      */
     protected List clusterListeners = new ArrayList();
 
@@ -376,7 +376,7 @@ public class SimpleTcpCluster
     }
 
     /**
-     * has members
+     * 是否有节点
      */
     protected boolean hasMembers = false;
     public boolean hasMembers() {
@@ -680,6 +680,10 @@ public class SimpleTcpCluster
         }
     }
 
+    /**
+     * 检查监听, value, Deployer, channel 信息，如果没有做配置， 则添加默认
+     * void
+     */
     protected void checkDefaults() {
         if ( clusterListeners.size() == 0 ) {
             addClusterListener(new JvmRouteSessionIDBinderListener()); 
@@ -698,6 +702,7 @@ public class SimpleTcpCluster
     }
 
     /**
+     * 注册所有的value 阀
      * register all cluster valve to host or engine
      * @throws Exception
      * @throws ClassNotFoundException
