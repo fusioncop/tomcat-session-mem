@@ -35,7 +35,9 @@ import net.spy.memcached.transcoders.Transcoder;
  */
 public final class SuffixLocatorConnectionFactory extends DefaultConnectionFactory {
 
+	//所有可用的节点
     private final NodeIdList _nodeIds;
+    // 节点解析工具类
     private final SessionIdFormat _sessionIdFormat;
     private final NodeIdResolver _resolver;
     private final Statistics _statistics;
