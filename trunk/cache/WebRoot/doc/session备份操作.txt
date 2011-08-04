@@ -1,0 +1,36 @@
+sticky: 
+每次请求，session attribute 有变化， 或者  sessionid有变化时，才做更新
+
+
+后台定时超时检查任务：
+session.isValidInternal()
+&& !session.isExpiring()
+&& !session.isBackupRunning()
+&& !session.isExpirationUpdateRunning()
+&& session.wasAccessedSinceLastBackup()
+&& session.getMaxInactiveInterval() > 0
+&& session.getMemcachedExpirationTime() <= 2 * delay
+
+session有效 && 未销毁  && 未正在进行备份 && 未正在进行更新 &&　当前时间大于最后一次备份时间 && session会话保持时间大于0
+&& 会话保持时间 - (当前时间   -  session最后一次备份时间) <= 回话超时时间时 2 * delay
+满足以上条件才执行session备份操作。
+
+执行备份操作后，memcached中的session超时时间为  （容器中的session会话保持）
+
+memcached节点挂掉对用户使用不影响。但后台后报异常
+2011-08-04 14:45:28.057 INFO net.spy.memcached.MemcachedConnection:  Reconnecting due to failure to connect to {QA sa=/192.168.22.23:11211, #Rops=0, #Wops=0, #iq=0, topRop=null, topWop=null, toWrite=0, interested=0}
+java.net.ConnectException: Connection refused
+        at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+        at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:574)
+        at net.spy.memcached.MemcachedConnection.handleIO(MemcachedConnection.java:295)
+        at net.spy.memcached.MemcachedConnection.handleIO(MemcachedConnection.java:193)
+        at net.spy.memcached.MemcachedClient.run(MemcachedClient.java:1458)
+2011-08-04 14:45:28.057 WARN net.spy.memcached.MemcachedConnection:  Closing, and reopening {QA sa=/192.168.22.23:11211, #Rops=0, #Wops=0, #iq=0, topRop=null, topWop=null, toWrite=0, interested=0}, attempt 29.
+
+
+
+当 俩个memcached节点时，将会有一个作为备份节点
+sticky模式下：
+memcachedNodes="n1:192.168.119.170:11211 n2:192.168.119.166:11211"
+failoverNodes="n2"
+failoverNodes 将作为备份节点。 如果 不配置failoverNodes, 则俩个memcached做均衡分配
