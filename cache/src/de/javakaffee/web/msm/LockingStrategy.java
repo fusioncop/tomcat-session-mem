@@ -693,7 +693,7 @@ public abstract class LockingStrategy {
         private final int _maxInactiveInterval;
 
         /**
-         * <p>更新有效性验证信息和备份的有效性验证信息</p>
+         * <p>更新备份的有效性验证信息</p>
          * 仅作以下操作：memcached 中set 有效性验证信息备份："bak:" + "validity:" + sessionId;
          * 测试 memcached中是否包含_sessionId;
          * 测试 memcached中是否包含"bak:" + sessionId;

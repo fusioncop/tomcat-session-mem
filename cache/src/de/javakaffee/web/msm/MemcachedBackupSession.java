@@ -72,14 +72,14 @@ public final class MemcachedBackupSession extends StandardSession {
     private long _lastBackupTime;
 
     /*
-     * 倒数第二次备份时间（备份至memcached）
+     * 倒数第二次备份时间（备份至memcached），用来备份最后一次成功备份的时间，以防止备份失败的情况，出现时间差异。
      * The former value of _lastBackupTimestamp which is restored if the session could not be saved
      * in memcached.
      */
     private transient long _previousLastBackupTime;
 
     /*
-     * memcached中存放session的超时时间
+     * memcached中存放session的会话剩余时间, 等同于session会话的剩余有效时间
      * The expiration time that was sent to memcached with the last backup/touch.
      */
     private transient int _lastMemcachedExpirationTime;
@@ -165,6 +165,7 @@ public final class MemcachedBackupSession extends StandardSession {
     }
 
     /**
+     *  <p>截止最后一次访问该session，该session会话剩余的有效时间</p>
      * Calculates the expiration time that must be sent to memcached,
      * based on the sessions maxInactiveInterval and the time the session
      * is already idle (based on thisAccessedTime).
@@ -200,10 +201,10 @@ public final class MemcachedBackupSession extends StandardSession {
     }
 
     /**
+     * <p>截止最后一次备份该session，该session会话剩余的有效时间</p>
      * Gets the time in seconds when this session will expire in memcached.
      * If the session was stored in memcached with expiration 0 this method will just
      * return 0.
-     *
      * @return the time in seconds
      */
     int getMemcachedExpirationTime() {
@@ -224,6 +225,7 @@ public final class MemcachedBackupSession extends StandardSession {
     }
 
     /**
+     * 设置最后一次备份时间,并备份上次备份时间
      * Store the time in millis when this session was successfully stored in memcached. This timestamp
      * is stored in memcached also to support non-sticky session mode. It's reset on backup failure
      * (see {@link #backupFailed()}), not on skipped backup, therefore it must be set after skip checks
@@ -264,6 +266,7 @@ public final class MemcachedBackupSession extends StandardSession {
     }
 
     /**
+     * 设置memcached中存放session的会话剩余时间
      * Set the expiration time that was sent to memcached with this backup/touch.
      * @param lastMemcachedExpirationTime the lastMemcachedExpirationTime to set
      */
@@ -272,6 +275,7 @@ public final class MemcachedBackupSession extends StandardSession {
     }
 
     /**
+     * <p>session最后一次访问时间是否大于最后一次备份时间</p>
      * Determines, if the session was accessed since the last backup.
      * @return <code>true</code>, if <code>thisAccessedTime > lastBackupTimestamp</code>.
      */
@@ -280,6 +284,7 @@ public final class MemcachedBackupSession extends StandardSession {
     }
 
     /**
+     * <p>在备份未出错的情况下，设置该属性为session的访问时间</p>
      * Stores the current value of {@link #getThisAccessedTimeInternal()} in a private,
      * transient field. You can check with {@link #wasAccessedSinceLastBackupCheck()}
      * if the current {@link #getThisAccessedTimeInternal()} value is different
@@ -291,6 +296,10 @@ public final class MemcachedBackupSession extends StandardSession {
     }
 
     /**
+     * <p>上次成功备份的访问时间是否与本次访问的时间不相等，
+     * 不相等 则返回 true；相等 则返回 false
+     * <b>感觉没多大意义</b>
+     * </p>
      * Determines, if the current request accessed the session. This is provided,
      * if the current value of {@link #getThisAccessedTimeInternal()}
      * differs from the value stored by {@link #storeThisAccessedTimeFromLastBackupCheck()}.
