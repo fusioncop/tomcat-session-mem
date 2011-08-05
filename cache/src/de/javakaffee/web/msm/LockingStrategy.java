@@ -248,7 +248,7 @@ public abstract class LockingStrategy {
     }
 
     /**
-     * <p>更新有效性验证信息和备份的有效性验证信息</p>
+     * <p>value备份调用时，容器中没有session对象时，更新有效性验证信息和备份的有效性验证信息</p>
      *  当前容器中没有session对象时，更新有效性验证信息，和 备份的有效性验证信息
      *  首先 更新有效性验证信息 "validity:" + sessionId;
      *  其次 更新备份的有效性验证信息"bak:" + "validity:" + sessionId; <br/>
@@ -301,7 +301,7 @@ public abstract class LockingStrategy {
     }
 
     /**
-     * <p>更新 session有效性验证信息，更新session信息，更新 备份 session信息</p>
+     * <p>value中调用，备份session完毕后，更新 session有效性验证信息，更新session信息，更新 备份 session信息</p>
      * Is invoked after the backup of the session is initiated, it's represented by the provided backupResult. The
      * requestId is identifying the request.
      */
@@ -353,7 +353,7 @@ public abstract class LockingStrategy {
     }
 
     /**
-     * 
+     * findSession调用时，首先检查 是否包含当前请求
      * Is used to determine if this thread / the current request already hit the application or if this method
      * invocation comes from the container.
      */
@@ -383,7 +383,7 @@ public abstract class LockingStrategy {
     }
 
     /**
-     * 根据sessionid查找 ("bak:" + "validity:" + sessionid)备份的有效性session 对象
+     * value中调用 加载 备份的有效性验证信息 ("bak:" + "validity:" + sessionid)备份的有效性session 对象
      * @param sessionId
      * @return
      */
@@ -429,7 +429,7 @@ public abstract class LockingStrategy {
     }
 
     /**
-     * manager 中调用在删除memcache中 sessionid 对象后，
+     * 删除memcached中的 session信息后， 删除有效性验证信息，删除备份的session，删除备份的有效性验证信息
      * 删除 "validity:" + sessionId; 有效性  对象 
      * 删除 "bak:" + sessionId;
      * 删除 "bak:" + "validity:" + sessionId;
@@ -687,6 +687,7 @@ public abstract class LockingStrategy {
     private final class OnBackupWithoutLoadedSessionTask implements Callable<Void> {
 
         private final String _sessionId;
+        //是否有备份memcached节点
         private final boolean _storeSecondaryBackup;
         private final String _validityKey;
         private final byte[] _validityData;
