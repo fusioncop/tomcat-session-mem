@@ -16,7 +16,7 @@ import com.esotericsoftware.kryo.serialize.ArraySerializer;
 abstract public class Serializer {
 	static private final byte NULL_OBJECT = 0;
 	static private final byte NOT_NULL_OBJECT = 1;
-
+	//是否可以为空，当为基本类型时，该值为false
 	private boolean canBeNull = true;
 
 	/**

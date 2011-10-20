@@ -22,13 +22,13 @@ public class KryoTest {
 	public static void main(String[] args) {
 		long start = System.nanoTime();
 		testKryo();
-		System.out.println("---------------------->"+(System.nanoTime()-start));
-		start = System.nanoTime();
-		XmlTest.testXml();
-		System.out.println("---------------------->"+(System.nanoTime()-start));
-		start = System.nanoTime();
-		JsonTest.testJson();
-		System.out.println("---------------------->"+(System.nanoTime()-start));
+//		System.out.println("---------------------->"+(System.nanoTime()-start));
+//		start = System.nanoTime();
+//		XmlTest.testXml();
+//		System.out.println("---------------------->"+(System.nanoTime()-start));
+//		start = System.nanoTime();
+//		JsonTest.testJson();
+//		System.out.println("---------------------->"+(System.nanoTime()-start));
     }
 	
 	public static void testKryo(){

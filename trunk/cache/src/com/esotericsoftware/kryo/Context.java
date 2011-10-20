@@ -16,6 +16,7 @@ import com.esotericsoftware.kryo.compress.DeltaCompressor;
  * @author Nathan Sweet <misc@n4te.com>
  */
 public class Context {
+	
 	int objectGraphLevel;
 
 	private HashMap<Object, Object> map;

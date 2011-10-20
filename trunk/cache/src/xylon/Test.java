@@ -74,7 +74,7 @@ public class Test{
 //		System.out.println((2<<8));
 //		testMemcached();
 		testMemcached1();
-//		testMemcached2();
+		testMemcached2();
 //		testEqual("binary");
 	}
 	
@@ -90,7 +90,7 @@ public class Test{
 			e.printStackTrace();
 		}
 	}
-	public static final String sessionid = "E78FCCBD648DA06A51A52383DD39E254-n2.tomcat2";
+	public static final String sessionid = "sss-n2";
 	public static final String validity = "validity:" + sessionid;
 	public static final String lock = "lock:" + sessionid;
 	public static final String bak = "bak:" + sessionid;
@@ -99,12 +99,14 @@ public class Test{
 	public static void testMemcached1(){
 		try {
 			final MemcachedClient client = new MemcachedClient( new DefaultConnectionFactory(),
-			        Arrays.asList( new InetSocketAddress( "192.168.119.170", 11211 )) );
-			System.out.println(client.get(sessionid));
-			System.out.println(client.get(validity));
-			System.out.println(client.get(lock));
-			System.out.println(client.get(bak));
-			System.out.println(client.get(bak_validity));
+			        Arrays.asList( new InetSocketAddress( "192.168.30.40", 11211 )) );
+			System.out.println(client.get("sss-n2"));
+			System.out.println(client.get("sss-n1"));
+//			System.out.println(client.get(sessionid));
+//			System.out.println(client.get(validity));
+//			System.out.println(client.get(lock));
+//			System.out.println(client.get(bak));
+//			System.out.println(client.get(bak_validity));
 			
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -114,12 +116,14 @@ public class Test{
 	public static void testMemcached2(){
 		try {
 			final MemcachedClient client = new MemcachedClient( new DefaultConnectionFactory(),
-			        Arrays.asList(new InetSocketAddress( "192.168.119.166", 11211 )) );
-			System.out.println(client.get(sessionid));
-			System.out.println(client.get(validity));
-			System.out.println(client.get(lock));
-			System.out.println(client.get(bak));
-			System.out.println(client.get(bak_validity));
+			        Arrays.asList(new InetSocketAddress( "192.168.30.32", 11211 )) );
+			System.out.println(client.get("sss-n2"));
+			System.out.println(client.get("sss-n1"));
+//			System.out.println(client.get(sessionid));
+//			System.out.println(client.get(validity));
+//			System.out.println(client.get(lock));
+//			System.out.println(client.get(bak));
+//			System.out.println(client.get(bak_validity));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

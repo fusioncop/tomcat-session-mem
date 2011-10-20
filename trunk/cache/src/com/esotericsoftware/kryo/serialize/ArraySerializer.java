@@ -184,6 +184,12 @@ public class ArraySerializer extends Serializer {
 		}
 	}
 
+	/**
+	 * 递归查找该数组组件的最小类型的类Class
+	 * 返回该Class的深度
+	 * @param arrayClass
+	 * @return
+	 */
 	static public int getDimensionCount (Class arrayClass) {
 		int depth = 0;
 		Class nextClass = arrayClass.getComponentType();
@@ -216,7 +222,13 @@ public class ArraySerializer extends Serializer {
 			if (elementsAreArrays) collectDimensions(element, dimension + 1, dimensions);
 		}
 	}
-
+	
+	/**
+	 * 递归查找该数组组件的最小类型的类Class
+	 * 返回表示数组组件类型的 Class。
+	 * @param arrayClass
+	 * @return
+	 */
 	static public Class getElementClass (Class arrayClass) {
 		Class elementClass = arrayClass;
 		while (elementClass.getComponentType() != null)

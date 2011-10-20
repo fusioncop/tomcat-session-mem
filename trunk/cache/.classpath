@@ -39,5 +39,10 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/kryoserializers/reflectasm-0.9.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/kryoserializers/testng-6.1.1.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/kryoserializers/wicket-1.4.17.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/jmx/jmxtools-1.2.1.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/jmx/jmxremote.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/cache-client/xmemcached-1.3.3.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/slf4j-api-1.6.1.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/slf4j-nop-1.6.1.jar"/>
 	<classpathentry kind="output" path="WebRoot/WEB-INF/classes"/>
 </classpath>
