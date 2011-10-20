@@ -1,9 +1,9 @@
-###\u4fee\u6539 <Engine>\u8282\u70b9
+###配置$CATALINA_HOME/conf/server.xml   <Engine>
 
 <Engine name="Catalina" defaultHost="localhost" jvmRoute="tomcat2">
 ########################################
 
-###\u52a0\u5165<Engine>\u8282\u70b9\u4e2d
+###配置$CATALINA_HOME/conf/server.xml   <Engine>节点内
 <Cluster className="org.apache.catalina.ha.tcp.SimpleTcpCluster" channelSendOptions="8">
           
 <Manager className="org.apache.catalina.ha.session.DeltaManager"
@@ -38,7 +38,7 @@
 ##########################################
 
 
-###\u5de5\u7a0bweb.xml \u4e2d\u6dfb\u52a0\u914d\u7f6e
+###配置工程内的web.xml
 
         <distributable/>     
 #############################

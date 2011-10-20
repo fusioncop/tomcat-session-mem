@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-module
   type="WEB"
-  name="cache"
+  name="msm"
   id="myeclipse.1308824269875"
   context-root="/cache"
   j2ee-spec="5.0"
-  archive="cache.war">
+  archive="msm.war">
   <attributes>
     <attribute name="webrootdir" value="WebRoot" />
   </attributes>

@@ -47,14 +47,17 @@ public class Kryo {
 		}
 	};
 
+	//存放Map<int, RegisteredClass> 描述已注册的类信息
 	private final IntHashMap<RegisteredClass> idToRegisteredClass = new IntHashMap(64);
+	//存放Map<Class, RegisteredClass> 描述已注册的类信息
 	private final HashMap<Class, RegisteredClass> classToRegisteredClass = new HashMap(64);
+	//用来表示注册类中的自增ID
 	private AtomicInteger nextClassID = new AtomicInteger(1);
 	private Object listenerLock = new Object();
 	private Listener[] listeners = {};
 	private boolean registrationOptional;
 	private ClassLoader classLoader = getClass().getClassLoader();
-
+	//
 	private final CustomSerializer customSerializer = new CustomSerializer(this);
 	private final ArraySerializer arraySerializer = new ArraySerializer(this);
 	private final CollectionSerializer collectionSerializer = new CollectionSerializer(this);
@@ -93,38 +96,28 @@ public class Kryo {
 	}
 
 	/**
-	 * Registers a class for serialization.
-	 * <p>
-	 * If <tt>useClassNameString</tt> is true, the first time an object of the specified type is encountered, the class name String
-	 * will be written to the serialized bytes. Each appearance in the graph after the first is stored as an integer ordinal.
-	 * <p>
-	 * If <tt>useClassNameString</tt> is false, the class is assigned an ordinal which will be written to the serialized bytes for
-	 * objects of the specified type. This is more efficient than using the class name String, but has the drawback that the exact
-	 * same classes must be registered in exactly the same order when the class is deserialized.
-	 * <p>
-	 * By default, primitive types, primitive wrappers, and java.lang.String are registered. All other classes must be registered
-	 * before they can be serialized. Note that JDK classes such as ArrayList, HashMap, etc and even array classes such as
-	 * "int[].class" or "short[][].class" must be registered. {@link #setRegistrationOptional(boolean) Optional registration} can
-	 * be enabled to handle unregistered classes as they are encountered.
-	 * <p>
-	 * The {@link Serializer} specified will be used to serialize and deserialize objects of the specified type. Note that a
-	 * serializer can be wrapped with a {@link Compressor} for compression and/or encoding.
-	 * <p>
-	 * If the class is already registered, the serializer will be changed.
-	 * @see #register(Class)
+	 * 完成对类类型的注册
+	 * @param type					类型
+	 * @param serializer			序列化实现类
+	 * @param useClassNameString	是否启用默认的ID值
+	 * @return
 	 */
 	public RegisteredClass register (Class type, Serializer serializer, boolean useClassNameString) {
 		if (type == null) throw new IllegalArgumentException("type cannot be null.");
 		if (serializer == null) throw new IllegalArgumentException("serializer cannot be null.");
+		//该类是否表示一个基本类型
 		if (type.isPrimitive()) serializer.setCanBeNull(false);
 
 		int id;
+		//该类是否已注册
 		RegisteredClass existingRegisteredClass = classToRegisteredClass.get(type);
 		if (useClassNameString)
 			id = ID_CLASS_NAME;
+		//已注册
 		else if (existingRegisteredClass != null)
 			id = existingRegisteredClass.id;
 		else {
+		//未注册
 			id = nextClassID.getAndIncrement();
 			if (id == ID_CLASS_NAME) id = nextClassID.getAndIncrement();
 		}
@@ -151,8 +144,10 @@ public class Kryo {
 	}
 
 	/**
-	 * Registers a class with an ordinal.
-	 * @see #register(Class, Serializer, boolean)
+	 * 完成对类类型的注册
+	 * @param type					类型
+	 * @param serializer			序列化实现类
+	 * @return
 	 */
 	public RegisteredClass register (Class type, Serializer serializer) {
 		return register(type, serializer, false);
